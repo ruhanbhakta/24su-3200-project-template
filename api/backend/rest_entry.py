@@ -6,6 +6,8 @@ from flask import Flask
 from backend.db_connection import db
 from backend.customers.customer_routes import customers
 from backend.products.products_routes import products
+from backend.marketing_analyst.martketing_routes import marketing
+
 import os
 from dotenv import load_dotenv
 
@@ -23,11 +25,13 @@ def create_app():
 
     # # these are for the DB object to be able to connect to MySQL. 
     # app.config['MYSQL_DATABASE_USER'] = 'root'
-    app.config['MYSQL_DATABASE_USER'] = os.getenv('DB_USER')
-    app.config['MYSQL_DATABASE_PASSWORD'] = os.getenv('MYSQL_ROOT_PASSWORD')
-    app.config['MYSQL_DATABASE_HOST'] = os.getenv('DB_HOST')
-    app.config['MYSQL_DATABASE_PORT'] = int(os.getenv('DB_PORT'))
-    app.config['MYSQL_DATABASE_DB'] = os.getenv('DB_NAME')  # Change this to your DB name
+    # Configuration for MySQL database using environment variables
+    app.config['MYSQL_DATABASE_USER'] = os.getenv('DB_USER')                # 'root'
+    app.config['MYSQL_DATABASE_PASSWORD'] = os.getenv('MYSQL_ROOT_PASSWORD') # 'cs3200'
+    app.config['MYSQL_DATABASE_HOST'] = os.getenv('DB_HOST')                # 'db'
+    app.config['MYSQL_DATABASE_PORT'] = int(os.getenv('DB_PORT'))           # 3306
+    app.config['MYSQL_DATABASE_DB'] = os.getenv('DB_NAME')                  # 'FreshMeet'
+
 
     # Initialize the database object with the settings above. 
     db.init_app(app)
@@ -95,6 +99,7 @@ def create_app():
     # and give a url prefix to each
     app.register_blueprint(customers,   url_prefix='/c')
     app.register_blueprint(products,    url_prefix='/p')
+    app.register_blueprint(marketing, url_prefix="/marketing")
 
     # Don't forget to return the app object
     return app
