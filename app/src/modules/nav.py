@@ -19,6 +19,12 @@ def WorldBankVizNav():
 def MapDemoNav():
     st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon='🗺️')
 
+def CompanySizes():
+    st.sidebar.page_link("pages/Mar_Company_Size.py", label="Company Sizes", icon='🏦')
+
+def PopEmployers():
+    st.sidebar.page_link("pages/Mar_Companies_Count.py", label="Company Counts", icon='🏦')
+
 ## ------------------------ Examples for Role of usaid_worker ------------------------
 def ApiTestNav():
     st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon='🛜')
@@ -61,6 +67,8 @@ def SideBarLinks(show_home=False):
             PolStratAdvHomeNav()
             WorldBankVizNav()
             MapDemoNav()
+            CompanySizes()
+            PopEmployers()
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state['role'] == 'usaid_worker':
