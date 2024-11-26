@@ -14,17 +14,46 @@ st.write('')
 st.write('')
 st.write('### What would you like to do today?')
 
-if st.button('View Popular Companies for Students and Alumni', 
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/Mar_Companies_Count.py')
+st.write("")  # Spacer
+st.write("")  # Spacer
 
-if st.button('View Company Breakdown by Size', 
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/Mar_Company_Size.py')
+col1, col2, col3 = st.columns(3, gap="large")
 
-if st.button('View Placement Metrics', 
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/Mar_Placements.py')
+with col1:
+    st.markdown(
+        """
+        <div class="card">
+            <h3>🎯 Popular Companies</h3>
+            <p>Discover top companies for students and alumni.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    if st.button("Explore Companies", type="primary"):
+        st.switch_page("pages/Mar_Companies_Count.py")
+
+with col2:
+    st.markdown(
+        """
+        <div class="card">
+            <h3>🏢 Company Breakdown</h3>
+            <p>Analyze companies by size for better insights.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    if st.button("View Breakdown", type="primary"):
+        st.switch_page("pages/Mar_Company_Size.py")
+
+with col3:
+    st.markdown(
+        """
+        <div class="card">
+            <h3>📊 Placement Metrics</h3>
+            <p>Understand placement trends and key metrics.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    if st.button("View Metrics", type="primary"):
+        st.switch_page("pages/Mar_Placements.py")
