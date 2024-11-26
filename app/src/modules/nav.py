@@ -11,19 +11,16 @@ def AboutPageNav():
 
 #### ------------------------ Examples for Role of pol_strat_advisor ------------------------
 def PolStratAdvHomeNav():
-    st.sidebar.page_link("pages/00_Pol_Strat_Home.py", label="Political Strategist Home", icon='👤')
-
-def WorldBankVizNav():
-    st.sidebar.page_link("pages/01_World_Bank_Viz.py", label="World Bank Visualization", icon='🏦')
-
-def MapDemoNav():
-    st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon='🗺️')
+    st.sidebar.page_link("pages/Marketing_Analyst_Home.py", label="Marketing Analyst Home", icon='👤')
 
 def CompanySizes():
-    st.sidebar.page_link("pages/Mar_Company_Size.py", label="Company Sizes", icon='🏦')
+    st.sidebar.page_link("pages/Mar_Company_Size.py", label="Company Sizes Breakdown", icon='🏤')
 
 def PopEmployers():
-    st.sidebar.page_link("pages/Mar_Companies_Count.py", label="Company Counts", icon='🏦')
+    st.sidebar.page_link("pages/Mar_Companies_Count.py", label="Popular Companies", icon='💼')
+
+def PlacementMetrics():
+    st.sidebar.page_link("pages/Mar_Placements.py", label="Placement Metrics", icon='📈')
 
 ## ------------------------ Examples for Role of usaid_worker ------------------------
 def ApiTestNav():
@@ -48,7 +45,7 @@ def SideBarLinks(show_home=False):
     """    
 
     # add a logo to the sidebar always
-    st.sidebar.image("assets/logo.png", width = 150)
+    st.sidebar.image("assets/image.png")
 
     # If there is no logged in user, redirect to the Home (Landing) page
     if 'authenticated' not in st.session_state:
@@ -62,13 +59,12 @@ def SideBarLinks(show_home=False):
     # Show the other page navigators depending on the users' role.
     if st.session_state["authenticated"]:
 
-        # Show World Bank Link and Map Demo Link if the user is a political strategy advisor role.
-        if st.session_state['role'] == 'pol_strat_advisor':
+        # Show relevant links if the user is a political strategy advisor role.
+        if st.session_state['role'] == 'marketing_analyst':
             PolStratAdvHomeNav()
-            WorldBankVizNav()
-            MapDemoNav()
             CompanySizes()
             PopEmployers()
+            PlacementMetrics()
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state['role'] == 'usaid_worker':
