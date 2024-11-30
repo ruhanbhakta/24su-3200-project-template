@@ -2,15 +2,44 @@ import streamlit as st
 from streamlit_extras.app_logo import add_logo
 from modules.nav import SideBarLinks
 
+# Add navigation links and optional logo
 SideBarLinks()
 
-st.write("# About this App")
+# Page title and introduction
+st.title("🚀 About FreshMeet")
+st.markdown("---")
 
-st.markdown (
+# Section: The Problem
+st.subheader("🌟 The Problem")
+st.markdown(
     """
-    Picture this: you’re a college student, anxious and unsure as you navigate your first co-op search with no experience and little guidance. Or maybe you’re a recruiter, spending countless hours sorting through unqualified candidates and struggling to find the right fit for your growing company. And then there’s the co-op advisor—overwhelmed, managing hundreds of students, each needing unique support, with no efficient way to keep up.
-    Enter FreshMeet, the data-driven platform poised to revolutionize how co-ops are experienced. This app tackles the biggest pain points in the current system: the disorganized, stressful hunt for the right opportunities, inefficient hiring processes, and the struggle for personalized guidance in a sea of students. With FreshMeet, students get personalized dashboards that track their applications and skill progress, making the job search feel less like a maze and more like a clear path to success. Recruiters can sort and filter candidates effortlessly, accessing skill-based matches and real-time updates. And for advisors, FreshMeet provides an intuitive interface to monitor, support, and manage students’ co-op journeys at scale.
-    Built for students seeking their first chance, recruiters who value efficiency, and advisors who need a powerful yet simple management tool, FreshMeet is here to elevate the co-op experience from frustration to seamless connection. FreshMeet is your next big investment. FreshMeet brings desperately needed order and data insights to the Northeastern co-op experience.
+    - **Students:** Overwhelmed and unsure during their first co-op search.  
+    - **Recruiters:** Struggle to find qualified candidates efficiently.  
+    - **Advisors:** Juggling hundreds of students with no scalable tools.
+    """
+)
 
+# Section: The Solution
+st.subheader("💡 FreshMeet: Revolutionizing Co-ops")
+st.markdown(
     """
-        )
+    FreshMeet simplifies the co-op experience with a **data-driven platform**:  
+    - **For Students:** Personalized dashboards for tracking applications and skill progress.  
+    - **For Recruiters:** Efficient candidate filtering with skill-based matches and updates.  
+    - **For Advisors:** Intuitive tools to monitor and support students at scale.
+    """
+)
+
+# Section: Why Choose FreshMeet?
+st.subheader("✨ Why FreshMeet?")
+st.markdown(
+    """
+    - **Streamlined Processes:** Transform the co-op journey from chaos to clarity.  
+    - **Data Insights:** Leverage powerful analytics for better decision-making.  
+    - **Seamless Connections:** Bring students, recruiters, and advisors together.
+    """
+)
+
+# Footer
+st.markdown("---")
+st.markdown("*Created by Ruhan, Yuan, Borys, Jeff, and Spencer*")
