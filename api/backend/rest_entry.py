@@ -9,6 +9,7 @@ from backend.products.products_routes import products
 from backend.marketing_analyst.martketing_routes import marketing
 from backend.recruiter.recruiting_routes import recruiting
 from backend.sysadmin.sysadmin_routes import sysadmin
+from backend.advisor.advisor_routes import advisor
 
 import os
 from dotenv import load_dotenv
@@ -104,6 +105,7 @@ def create_app():
     app.register_blueprint(marketing, url_prefix="/marketing")
     app.register_blueprint(recruiting, url_prefix="/recruiting")
     app.register_blueprint(sysadmin, url_prefix="/sysadmin")
+    app.register_blueprint(advisor, url_prefix = "/advisor")
     
 
     # Don't forget to return the app object
