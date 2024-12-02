@@ -7,7 +7,7 @@ from backend.db_connection import db
 from backend.customers.customer_routes import customers
 from backend.products.products_routes import products
 from backend.marketing_analyst.martketing_routes import marketing
-from backend.customers.recruiter.recruiting_routes import recruiting
+from backend.recruiter.recruiting_routes import recruiting
 from backend.sysadmin.sysadmin_routes import sysadmin
 
 import os
