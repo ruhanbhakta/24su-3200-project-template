@@ -1,21 +1,24 @@
-#BLueprint for the recruiter 
-from flask import Blueprint, request, jsonify, make_response, current_app
-import json
+from flask import Blueprint, request, jsonify, current_app
 from backend.db_connection import db
 
 recruiting = Blueprint('recruiting', __name__)
 
-#All of the applications on the job table based on (sorted by skill match and GPA)
-@recruiting.route('/applicants/sorted', methods=['GET']) 
-def applicants_sorted(): 
-
+# All of the applications on the job table based on (sorted by skill match and GPA)
+@recruiting.route('/applicants/sorted', methods=['GET'])
+def applicants_sorted():
     query = '''
         SELECT 
             s.firstName, 
             s.lastName, 
             s.major, 
             s.GPA,
-            (COUNT(DISTINCT ss.skillId) * 100.0) / COUNT(DISTINCT jps.skillId) AS skillMatchPercentage
+            ROUND(
+                (COUNT(DISTINCT ss.skillId) * 100.0) / 
+                (SELECT COUNT(DISTINCT ps.skillId) 
+                 FROM PostingSkills ps 
+                 JOIN JobPosting jb ON ps.jobId = jb.jobId), 
+                2
+            ) AS skillMatchPercentage
         FROM 
             Students s
         LEFT JOIN 
@@ -23,9 +26,9 @@ def applicants_sorted():
         LEFT JOIN 
             Applications a ON s.studentId = a.studentId
         LEFT JOIN 
-            JobPostings jb ON a.jobId = jb.jobId
+            JobPosting jb ON a.jobId = jb.jobId
         LEFT JOIN 
-            JobPostingsSkills jps ON jb.jobId = jps.jobId AND ss.skillId = jps.skillId
+            PostingSkills ps ON jb.jobId = ps.jobId AND ss.skillId = ps.skillId
         GROUP BY 
             s.studentId, s.firstName, s.lastName, s.major, s.GPA
         ORDER BY 
@@ -33,57 +36,51 @@ def applicants_sorted():
             skillMatchPercentage DESC;
     '''
     try:
-        # Get a database connection
         connection = db.connect()
         cursor = connection.cursor()
 
-        # Execute query
         cursor.execute(query)
-        numacceptances = cursor.fetchall()
+        applicants = cursor.fetchall()
 
-        # Close the cursor and connection
         cursor.close()
         connection.close()
 
-        return jsonify(numacceptances), 200
+        return jsonify(applicants), 200
 
     except Exception as e:
-        # Log the error and return a response
-        current_app.logger.error(f"Error fetching students: {e}")
-        return jsonify({"error": "Failed to fetch students"}), 500
+        current_app.logger.error(f"Error fetching sorted applicants: {e}")
+        return jsonify({"error": "Failed to fetch sorted applicants"}), 500
 
 
-#Average pay of all listings   
+# Average pay of all listings
 @recruiting.route('/applicants/listing/salary', methods=['GET'])
-def listing_salary(): 
+def listing_salary():
     query = '''
         SELECT 
             AVG(jb.salary) AS averageSalary
         FROM 
-            JobPostings jb;
+            JobPosting jb;
     '''
     try:
-        # Get a database connection
         connection = db.connect()
         cursor = connection.cursor()
 
-        # Execute query
         cursor.execute(query)
-        numacceptances = cursor.fetchall()
+        average_salary = cursor.fetchall()
 
-        # Close the cursor and connection
         cursor.close()
         connection.close()
 
-        return jsonify(numacceptances), 200
+        return jsonify(average_salary), 200
 
     except Exception as e:
-        # Log the error and return a response
-        current_app.logger.error(f"Error fetching students: {e}")
-        return jsonify({"error": "Failed to fetch students"}), 500
-#Average pay of all hired(Alumni)
+        current_app.logger.error(f"Error fetching average salary of job listings: {e}")
+        return jsonify({"error": "Failed to fetch average salary of job listings"}), 500
+
+
+# Average pay of all hired (Alumni)
 @recruiting.route('/applicants/hired/salary', methods=['GET'])
-def alumni_salary(): 
+def alumni_salary():
     query = '''
         SELECT 
             AVG(a.salary) AS averageAlumniSalary
@@ -91,70 +88,52 @@ def alumni_salary():
             Alumni a;
     '''
     try:
-        # Get a database connection
         connection = db.connect()
         cursor = connection.cursor()
 
-        # Execute query
         cursor.execute(query)
-        numacceptances = cursor.fetchall()
+        average_alumni_salary = cursor.fetchall()
 
-        # Close the cursor and connection
         cursor.close()
         connection.close()
 
-        return jsonify(numacceptances), 200
+        return jsonify(average_alumni_salary), 200
 
     except Exception as e:
-        # Log the error and return a response
-        current_app.logger.error(f"Error fetching students: {e}")
-        return jsonify({"error": "Failed to fetch students"}), 500
-#Number of applications by major 
+        current_app.logger.error(f"Error fetching average salary of alumni: {e}")
+        return jsonify({"error": "Failed to fetch average salary of alumni"}), 500
+
+
+# Number of applications by major
 @recruiting.route('/applicants/average/major', methods=['GET'])
-def alumni_salary(): 
+def applicants_by_major():
     query = '''
         SELECT 
             s.major,
-            COUNT(appCount.applicationCount) AS averageApplications
+            COUNT(a.appId) AS averageApplications
         FROM 
             Students s
         LEFT JOIN 
             Applications a ON s.studentId = a.studentId
         LEFT JOIN 
-            JobPostings jb ON a.jobId = jb.jobId
-        LEFT JOIN (
-            SELECT 
-                jb.jobId, 
-        COUNT(a.applicationId) AS applicationCount
-            FROM 
-                JobPostings jb
-            LEFT JOIN 
-                Applications a ON jb.jobId = a.jobId
-            GROUP BY 
-                jb.jobId
-        ) 
-        AS appCount ON jb.jobId = appCount.jobId
+            JobPosting jb ON a.jobId = jb.jobId
         GROUP BY 
             s.major
         ORDER BY 
             averageApplications DESC;
     '''
     try:
-        # Get a database connection
         connection = db.connect()
         cursor = connection.cursor()
 
-        # Execute query
         cursor.execute(query)
-        numacceptances = cursor.fetchall()
+        applications_by_major = cursor.fetchall()
 
-        # Close the cursor and connection
         cursor.close()
         connection.close()
 
-        return jsonify(numacceptances), 200
+        return jsonify(applications_by_major), 200
 
     except Exception as e:
-        # Log the error and return a response
-        current_app.logger.error(f"Error fetching students: {e}")
-        return jsonify({"error": "Failed to fetch students"}), 500
+        current_app.logger.error(f"Error fetching applications by major: {e}")
+        return jsonify({"error": "Failed to fetch applications by major"}), 500

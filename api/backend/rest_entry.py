@@ -7,6 +7,8 @@ from backend.db_connection import db
 from backend.customers.customer_routes import customers
 from backend.products.products_routes import products
 from backend.marketing_analyst.martketing_routes import marketing
+from backend.customers.recruiter.recruiting_routes import recruiting
+from backend.sysadmin.sysadmin_routes import sysadmin
 
 import os
 from dotenv import load_dotenv
@@ -100,6 +102,9 @@ def create_app():
     app.register_blueprint(customers,   url_prefix='/c')
     app.register_blueprint(products,    url_prefix='/p')
     app.register_blueprint(marketing, url_prefix="/marketing")
+    app.register_blueprint(recruiting, url_prefix="/recruiting")
+    app.register_blueprint(sysadmin, url_prefix="/sysadmin")
+    
 
     # Don't forget to return the app object
     return app
