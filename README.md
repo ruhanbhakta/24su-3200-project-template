@@ -10,4 +10,8 @@ Built for students seeking their first chance, recruiters who value efficiency, 
 
 This app caters to the needs of 5 different user personas: Students, Recruiters, Advisors, System Administrators, and Marketing Analysts
 
+## Contributors
+
+Made by Ruhan, Jeff, Borys, Spencer, and Yuan.
+
 
