@@ -95,36 +95,36 @@ def student_job_reviews():
 
     query = '''
         SELECT
-        j.jobId,
-        j.title,
-        er.reviewId,
-        er.review
+            j.jobId,
+            j.title,
+            er.reviewId,
+            er.review
         FROM
-        JobPosting j
+            JobPosting j
         JOIN
-        ReviewsOnEmployers er ON er.employerId = j.recruiterId
+            Recruiters r ON j.recruiterId = r.recruiterId
+        JOIN
+            ReviewsOnEmployers er ON er.employerId = r.empId
         WHERE
-        j.jobId = %s;
-        '''
+            j.jobId = %s;
+    '''
     try:
-        # Get a database connection
-        connection = db.connect()
-        cursor = connection.cursor()
+        # Use context managers for connection and cursor
+        with db.connect() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(query, (job_id,))
+                student_job_reviews = cursor.fetchall()
 
-        # Execute query
-        cursor.execute(query)
-        student_job_reviews = cursor.fetchall()
-
-        # Close the cursor and connection
-        cursor.close()
-        connection.close()
+        if not student_job_reviews:
+            return jsonify({"message": "No reviews found for this job ID"}), 404
 
         return jsonify(student_job_reviews), 200
 
     except Exception as e:
-        # Log the error and return a response
+        # Log the error for debugging purposes
         current_app.logger.error(f"Error fetching employer reviews: {e}")
         return jsonify({"error": "Failed to fetch employer reviews"}), 500
+
     
 # Grab the name and LinkedIn of the employer who made the job posting.
 #Also takes userinput on specific job (EX: /job_reviews?)
