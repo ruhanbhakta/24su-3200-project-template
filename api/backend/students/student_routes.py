@@ -83,3 +83,39 @@ def student_matching_postings():
         # Log the error and return a response
         current_app.logger.error(f"Error fetching matching jobs: {e}")
         return jsonify({"error": "Failed to fetch matching jobs"}), 500
+    
+# Grab reviews about the employer who posted the job posting.
+@student.route('/job_reviews', methods=['GET'])
+def student_job_reviews():
+    query = '''
+        SELECT
+        j.jobId,
+        j.title,
+        er.reviewId,
+        er.review
+        FROM
+        JobPosting j
+        JOIN
+        ReviewsOnEmployers er ON er.employerId = j.recruiterId
+        WHERE
+        j.jobId = 2;
+        '''
+    try:
+        # Get a database connection
+        connection = db.connect()
+        cursor = connection.cursor()
+
+        # Execute query
+        cursor.execute(query)
+        student_job_reviews = cursor.fetchall()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        return jsonify(student_job_reviews), 200
+
+    except Exception as e:
+        # Log the error and return a response
+        current_app.logger.error(f"Error fetching employer reviews: {e}")
+        return jsonify({"error": "Failed to fetch employer reviews"}), 500
