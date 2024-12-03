@@ -36,10 +36,9 @@ def AdvPop():
     st.sidebar.page_link("pages/Adv_Sorter.py", label="Classification Demo", icon='📃')\
 
 #### ------------------------ System Admin Role ------------------------
-def AdminPageNav():
-    st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon='🖥️')
-    st.sidebar.page_link("pages/21_ML_Model_Mgmt.py", label='ML Model Management', icon='🏢')
-
+def SysAdmin():
+    st.sidebar.page_link("pages/Sysadmin_Home.py", label="System Admin", icon='🖥️')
+    st.sidebar.page_link("pages/sys_health.py", label='Active Connections', icon='🏢')
 
 # --------------------------------Links Function -----------------------------------------------
 def SideBarLinks(show_home=False):
@@ -68,6 +67,10 @@ def SideBarLinks(show_home=False):
             CompanySizes()
             PopEmployers()
             PlacementMetrics()
+        
+        # Show relevant links if the user is a system admin
+        if st.session_state["role"] == "sysadmin":
+            SysAdmin()
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state['role'] == 'usaid_worker':
@@ -76,9 +79,7 @@ def SideBarLinks(show_home=False):
             AdvSorter()        
             AdvPop()
             
-        # If the user is an administrator, give them access to the administrator pages
-        if st.session_state['role'] == 'administrator':
-            AdminPageNav()
+       
 
     # Always show the About page at the bottom of the list of links
     AboutPageNav()

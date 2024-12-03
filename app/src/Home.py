@@ -66,6 +66,19 @@ if st.button("Marketing Analyst",
     logger.info("Logging in as Marketing Analyst")
     st.switch_page('pages/Marketing_Analyst_Home.py')
 
+if st.button("System Admin", 
+            type = 'primary', 
+            use_container_width=True):
+    # when user clicks the button, they are now considered authenticated
+    st.session_state['authenticated'] = True
+    # we set the role of the current user
+    st.session_state['role'] = 'sysadmin'
+    # finally, we ask streamlit to switch to another page, in this case, the 
+    # landing page for this particular user type
+    logger.info("Logging in as System Admin")
+    st.switch_page('pages/Sysadmin_Home.py')
+
+
 if st.button('Act as Mohammad, an USAID worker', 
             type = 'primary', 
             use_container_width=True):

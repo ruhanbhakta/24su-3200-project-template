@@ -48,7 +48,7 @@ def connection_limit():
 
     except Exception as e:
         current_app.logger.error(f"Error fetching connection limit: {e}")
-        return jsonify({"error": "Failed to fetch connection limit"}), 500
+        return jsonify({"error": "Failed to fetchs connection limit"}), 500
     
 @sysadmin.route('/db/server_load', methods=['GET'])
 def server_load():
@@ -70,3 +70,4 @@ def server_load():
     except Exception as e:
         current_app.logger.error(f"Error fetching server load: {e}")
         return jsonify({"error": "Failed to fetch server load"}), 500
+    
