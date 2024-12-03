@@ -215,3 +215,40 @@ def student_get_alumni():
         # Log the error and return a response
         current_app.logger.error(f"Error fetching alumni: {e}")
         return jsonify({"error": "Failed to fetch alumni"}), 500
+    
+# Grab companies and the number of alumni working at that company sorted from most to least.
+@student.route('/employer_alumni_number', methods=['GET'])
+def student_employer_numalum():
+    query = '''
+        SELECT
+        e.Name AS CompanyName,
+        COUNT(a.alumniId) AS NumAlumni
+        FROM
+        Alumni a
+        JOIN
+        Companies e ON a.empId = e.empId
+        GROUP BY
+        e.Name
+        ORDER BY
+        NumAlumni DESC;
+        '''
+    try:
+        # Get a database connection
+        connection = db.connect()
+        cursor = connection.cursor()
+
+        # Execute query
+        cursor.execute(query)
+        student_employer_numalum = cursor.fetchall()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        return jsonify(student_employer_numalum), 200
+
+    except Exception as e:
+        # Log the error and return a response
+        current_app.logger.error(f"Error fetching employers and number of alumni: {e}")
+        return jsonify({"error": "Failed to fetch employers and number of alumni"}), 500
+    
