@@ -87,6 +87,11 @@ def student_matching_postings():
 # Grab reviews about the employer who posted the job posting.
 @student.route('/job_reviews', methods=['GET'])
 def student_job_reviews():
+    job_id = request.args.get('jobId')
+
+    if not job_id or not job_id.isdigit():
+        return jsonify({"Error": "This is not a valid Job ID"}), 400
+
     query = '''
         SELECT
         j.jobId,
@@ -98,7 +103,49 @@ def student_job_reviews():
         JOIN
         ReviewsOnEmployers er ON er.employerId = j.recruiterId
         WHERE
-        j.jobId = 2;
+        j.jobId = %s;
+        '''
+    try:
+        # Get a database connection
+        connection = db.connect()
+        cursor = connection.cursor()
+
+        # Execute query
+        cursor.execute(query)
+        student_job_reviews = cursor.fetchall()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        return jsonify(student_job_reviews), 200
+
+    except Exception as e:
+        # Log the error and return a response
+        current_app.logger.error(f"Error fetching employer reviews: {e}")
+        return jsonify({"error": "Failed to fetch employer reviews"}), 500
+    
+# Grab reviews about the employer who posted the job posting.
+#Also takes userinput on specific job (EX: /job_reviews?)
+@student.route('/job_reviews', methods=['GET'])
+def student_job_reviews():
+    job_id = request.args.get('jobId')
+
+    if not job_id or not job_id.isdigit():
+        return jsonify({"Error": "This is not a valid Job ID"}), 400
+
+    query = '''
+        SELECT
+        j.jobId,
+        j.title,
+        er.reviewId,
+        er.review
+        FROM
+        JobPosting j
+        JOIN
+        ReviewsOnEmployers er ON er.employerId = j.recruiterId
+        WHERE
+        j.jobId = %s;
         '''
     try:
         # Get a database connection
