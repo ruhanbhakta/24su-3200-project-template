@@ -85,14 +85,9 @@ def student_matching_postings():
         return jsonify({"error": "Failed to fetch matching jobs"}), 500
     
 # Grab reviews about the employer who posted the job posting.
-#Also takes userinput on specific job (EX: /job_reviews?)
-@student.route('/job_reviews', methods=['GET'])
-def student_job_reviews():
-    job_id = request.args.get('jobId')
-
-    if not job_id or not job_id.isdigit():
-        return jsonify({"Error": "This is not a valid Job ID"}), 400
-
+#Also takes userinput on specific job (EX: /job_reviews/39)
+@student.route('/job_reviews/<int:job_id>', methods=['GET'])
+def student_job_reviews(job_id):
     query = '''
         SELECT
             j.jobId,
@@ -108,65 +103,67 @@ def student_job_reviews():
         WHERE
             j.jobId = %s;
     '''
+    
     try:
         # Use context managers for connection and cursor
         with db.connect() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, (job_id,))
-                student_job_reviews = cursor.fetchall()
+                job_reviews = cursor.fetchall()
 
-        if not student_job_reviews:
+        # Check if reviews are found
+        if not job_reviews:
             return jsonify({"message": "No reviews found for this job ID"}), 404
 
-        return jsonify(student_job_reviews), 200
+        # Return the reviews as JSON
+        return jsonify(job_reviews), 200
 
     except Exception as e:
-        # Log the error for debugging purposes
+        # Log the error and return a response
         current_app.logger.error(f"Error fetching employer reviews: {e}")
         return jsonify({"error": "Failed to fetch employer reviews"}), 500
-
     
 # Grab the name and LinkedIn of the employer who made the job posting.
-#Also takes userinput on specific job (EX: /job_reviews?)
-@student.route('/employer_info', methods=['GET'])
-def student_job_emp_information():
-    job_id = request.args.get('jobId')
-
-    if not job_id or not job_id.isdigit():
-        return jsonify({"Error": "This is not a valid Job ID"}), 400
-
+#Also takes userinput on specific job (EX: /employer_info/4)
+@student.route('/employer_info/<int:job_id>', methods=['GET'])
+def company_info(job_id):
     query = '''
         SELECT
-        e.Name AS CompanyName,
-        e.LinkedIn
+            e.Name AS CompanyName,
+            e.LinkedIn
         FROM
-        JobPosting j
+            JobPosting j
         JOIN
-        Recruiters r ON j.recruiterId = r.recruiterId
+            Recruiters r ON j.recruiterId = r.recruiterId
         JOIN
-        Companies e ON r.empId = e.empId
+            Companies e ON r.empId = e.empId
         WHERE
-        j.jobId = %s;
-        ''' 
+            j.jobId = %s;
+    '''
     try:
         # Get a database connection
         connection = db.connect()
         cursor = connection.cursor()
 
-        # Execute query
-        cursor.execute(query)
-        student_job_emp_information = cursor.fetchall()
+        # Execute the query with the dynamic job_id
+        cursor.execute(query, (job_id,))
+        company_info = cursor.fetchall()
 
         # Close the cursor and connection
         cursor.close()
         connection.close()
 
-        return jsonify(student_job_emp_information), 200
+        # Check if the result is empty
+        if not company_info:
+            return jsonify({"error": "No company found for the given jobId"}), 404
+
+        # Return the results as JSON
+        return jsonify(company_info), 200
 
     except Exception as e:
         # Log the error and return a response
-        current_app.logger.error(f"Error fetching employer information: {e}")
-        return jsonify({"error": "Failed to fetch employer information"}), 500
+        current_app.logger.error(f"Error fetching company information: {e}")
+        return jsonify({"error": "Failed to fetch company information"}), 500
     
 # Grab the name and LinkedIn of the employer who made the job posting.
 # Accepts user inputs for specific industries that they want to find alumni in.
