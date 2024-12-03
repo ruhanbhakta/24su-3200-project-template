@@ -128,7 +128,7 @@ def student_job_reviews():
     
 # Grab the name and LinkedIn of the employer who made the job posting.
 #Also takes userinput on specific job (EX: /job_reviews?)
-@student.route('/job_reviews', methods=['GET'])
+@student.route('/employer_info', methods=['GET'])
 def student_job_emp_information():
     job_id = request.args.get('jobId')
 
@@ -167,3 +167,51 @@ def student_job_emp_information():
         # Log the error and return a response
         current_app.logger.error(f"Error fetching employer information: {e}")
         return jsonify({"error": "Failed to fetch employer information"}), 500
+    
+# Grab the name and LinkedIn of the employer who made the job posting.
+# Accepts user inputs for specific industries that they want to find alumni in.
+# EXAMPLE: /alumni_by_industry?industry=Aerospace&industry=Fashion
+@student.route('/alumni', methods=['GET'])
+def student_get_alumni():
+    industries = request.args.getlist('industry') #User input for industries (can be multiple)
+
+    if not industries:
+        return jsonify({"Error": "Invalid industry/ies provided."}), 400
+    
+    industries_temporary = ','.join(['%s'] * len(industries)) #Formats and makes a list containing all the industries that
+    #the student searched for so that they can query all alumni in those industies. 
+    
+    query = f'''
+        SELECT
+        a.alumniId,
+        e.Name AS CompanyName,
+        a.firstName,
+        a.lastName,
+        a.email,
+        a.LinkedIn
+        FROM
+        Alumni a
+        JOIN
+        Companies e ON a.empId = e.empId
+        WHERE
+        a.industry IN ({industries_temporary});
+        ''' 
+    try:
+        # Get a database connection
+        connection = db.connect()
+        cursor = connection.cursor()
+
+        # Execute query
+        cursor.execute(query)
+        student_get_alumni = cursor.fetchall()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        return jsonify(student_get_alumni), 200
+
+    except Exception as e:
+        # Log the error and return a response
+        current_app.logger.error(f"Error fetching alumni: {e}")
+        return jsonify({"error": "Failed to fetch alumni"}), 500
