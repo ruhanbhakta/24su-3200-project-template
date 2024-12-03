@@ -25,3 +25,8 @@ if st.button('View Number of Allowed Connections',
              type='primary',
              use_container_width=True):
   st.switch_page('pages/sys_conn_limit.py')
+
+if st.button('View Server Load', 
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/sys_server.py')

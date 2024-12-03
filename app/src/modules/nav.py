@@ -40,6 +40,7 @@ def SysAdmin():
     st.sidebar.page_link("pages/Sysadmin_Home.py", label="System Admin", icon='🖥️')
     st.sidebar.page_link("pages/sys_health.py", label='Active Connections', icon='🏢')
     st.sidebar.page_link("pages/sys_conn_limit.py", label="Allowed Connections", icon= "⚠️")
+    st.sidebar.page_link("pages/sys_conn_limit.py", label="Server Load", icon= "🏋🏻")
 
 # --------------------------------Links Function -----------------------------------------------
 def SideBarLinks(show_home=False):
