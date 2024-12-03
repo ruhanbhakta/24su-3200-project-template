@@ -36,11 +36,23 @@ SideBarLinks(show_home=True)
 logger.info("Loading the Home page of the app")
 st.title("FreshMeet- Valuable Co-op Insights")
 st.write('\n\n')
-st.write('### HI! As which user would you like to log in?')
+st.write('### HI! Which user would you like to log in as?')
 
 # For each of the user personas for which we are implementing
 # functionality, we put a button on the screen that the user 
 # can click to MIMIC logging in as that mock user. 
+
+if st.button("Co-op Advisor", 
+            type = 'primary', 
+            use_container_width=True):
+    # when user clicks the button, they are now considered authenticated
+    st.session_state['authenticated'] = True
+    # we set the role of the current user
+    st.session_state['role'] = 'coop_advisor'
+    # finally, we ask streamlit to switch to another page, in this case, the 
+    # landing page for this particular user type
+    logger.info("Logging in as Co-op Advisor")
+    st.switch_page('pages/Coop_Advisor_Home.py')
 
 if st.button("Marketing Analyst", 
             type = 'primary', 
