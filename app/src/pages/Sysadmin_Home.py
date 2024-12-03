@@ -20,3 +20,8 @@ if st.button('View Number of Active Connections',
              type='primary',
              use_container_width=True):
   st.switch_page('pages/sys_health.py')
+
+if st.button('View Number of Allowed Connections', 
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/sys_conn_limit.py')

@@ -29,26 +29,36 @@ def db_health():
         current_app.logger.error(f"Error checking database health: {e}")
         return jsonify({"error": "Failed to check database health"}), 500
     
+from flask import jsonify, current_app
+
 @sysadmin.route('/db/connection_limit', methods=['GET'])
 def connection_limit():
     query = '''
         SHOW VARIABLES LIKE 'max_connections';
     '''
     try:
+        # Connect to the database
         connection = db.connect()
         cursor = connection.cursor()
 
+        # Execute the query
         cursor.execute(query)
-        connection_limit = cursor.fetchall()
+        result = cursor.fetchall()
 
+        # Close the cursor and connection
         cursor.close()
         connection.close()
 
-        return jsonify(connection_limit), 200
+        # Format the result for better clarity
+        formatted_result = {row[0]: row[1] for row in result}
+
+        return jsonify(formatted_result), 200
 
     except Exception as e:
+        # Log the error and return an error response
         current_app.logger.error(f"Error fetching connection limit: {e}")
-        return jsonify({"error": "Failed to fetchs connection limit"}), 500
+        return jsonify({"error": "Failed to fetch connection limit"}), 500
+
     
 @sysadmin.route('/db/server_load', methods=['GET'])
 def server_load():
