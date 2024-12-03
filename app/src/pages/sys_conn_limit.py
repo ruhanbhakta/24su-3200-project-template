@@ -16,5 +16,5 @@ st.write('## Current Connection Limit')
 if st.button('Get Number of Allowed Connections', 
              type = 'primary',
              use_container_width=True):
-  results = requests.get('http://api:4000/sysadmin/connection_limit').json()
+  results = requests.get('http://api:4000/sysadmin/db/connection_limit').json()
   st.dataframe(results)
