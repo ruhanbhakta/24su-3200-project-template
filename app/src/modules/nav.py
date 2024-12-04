@@ -24,16 +24,16 @@ def PlacementMetrics():
 
 ## ------------------------ Coop Advisor ------------------------
 def AdvisorHome():
-    st.sidebar.page_link("pages/Coop_advisor_Home.py", label="Test the API", icon='🛜')
+    st.sidebar.page_link("pages/Advisor_Home.py", label="Home Page", icon='🛜')
 
 def AdvDashboard():
-    st.sidebar.page_link("pages/Adv_Dashboard.py", label="Regression Prediction", icon='📈')
+    st.sidebar.page_link("pages/Adv_Dashboard.py", label="Students Dashboard", icon='📈')
 
 def AdvSorter():
-    st.sidebar.page_link("pages/Adv_Sorter.py", label="Classification Demo", icon='🔁')
+    st.sidebar.page_link("pages/Adv_Sorter.py", label="Sorted Students", icon='🔁')
 
 def AdvPop():
-    st.sidebar.page_link("pages/Adv_Sorter.py", label="Classification Demo", icon='📃')\
+    st.sidebar.page_link("pages/Adv_Popularjobs.py", label="Popular Jobs", icon='📃')\
 
 #### ------------------------ System Admin Role ------------------------
 def SysAdmin():
@@ -76,7 +76,7 @@ def SideBarLinks(show_home=False):
             SysAdmin()
 
         # If the user role is usaid worker, show the Api Testing page
-        if st.session_state['role'] == 'usaid_worker':
+        if st.session_state['role'] == 'coop_advisor':
             AdvisorHome()
             AdvDashboard() 
             AdvSorter()        

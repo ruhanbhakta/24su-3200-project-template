@@ -23,8 +23,7 @@ def student_dashboard():
             Students s ON a.studentId = s.studentId
         JOIN
             JobPosting jp ON a.jobId = jp.jobId
-        WHERE
-            s.advisorId = 1;
+        LIMIT 10;
             '''
    
     try:
@@ -91,11 +90,23 @@ def student_sorter():
 @advisor.route('/popularjobs', methods=['GET'])
 def popular_jobs():
     query = '''
-        SELECT jp.title, jp.location, COUNT(a.appId) AS totalApplications
-        FROM JobPosting jp
-        LEFT JOIN Applications a ON jp.jobId = a.jobId
-        GROUP BY jp.jobId
-        ORDER BY totalApplications DESC;
+        SELECT
+    jp.title AS jobTitle,
+    COUNT(a.appId) AS totalApplications,
+    c.Name AS companyName
+    FROM
+        JobPosting jp
+    LEFT JOIN
+        Applications a ON jp.jobId = a.jobId
+    LEFT JOIN
+        Recruiters r ON jp.recruiterId = r.recruiterId
+    LEFT JOIN
+        Companies c ON r.empId = c.empId
+    GROUP BY
+        jp.jobId, c.Name
+    ORDER BY
+        totalApplications DESC
+    LIMIT 10;
 ''' 
     try:
         # Get a database connection
