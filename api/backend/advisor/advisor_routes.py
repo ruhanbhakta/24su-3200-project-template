@@ -128,3 +128,49 @@ def popular_jobs():
         # Log the error and return an error response
         current_app.logger.error(f"Error fetching popular jobs: {e}")
         return jsonify({"error": "Failed to fetch popular jobs"}), 500
+    
+@advisor.route('/add_advisor', methods=['POST'])
+def add_advisor():
+    try:
+        # Get advisor data from the request
+        advisor_data = request.json
+
+        # Validate required fields
+        required_fields = ['firstName', 'lastName', 'email']
+        for field in required_fields:
+            if field not in advisor_data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        # Construct the SQL query
+        query = '''
+        INSERT INTO Advisors (firstName, lastName, email)
+        VALUES (%s, %s, %s)
+        '''
+        
+        # Get a database connection
+        connection = db.connect()
+        cursor = connection.cursor()
+
+        # Execute the query with the advisor data
+        cursor.execute(query, (
+            advisor_data['firstName'],
+            advisor_data['lastName'],
+            advisor_data['email']
+        ))
+
+        # Commit the transaction
+        connection.commit()
+
+        # Get the ID of the newly inserted advisor
+        new_advisor_id = cursor.lastrowid
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        return jsonify({"message": "Advisor added successfully", "advisorId": new_advisor_id}), 201
+
+    except Exception as e:
+        # Log the error and return an error response
+        current_app.logger.error(f"Error adding advisor: {e}")
+        return jsonify({"error": "Failed to add advisor"}), 500

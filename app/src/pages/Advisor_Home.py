@@ -4,7 +4,7 @@ logger = logging.getLogger(__name__)
 import streamlit as st
 from modules.nav import SideBarLinks
 
-st.set_page_config(layout = 'wide')
+st.set_page_config(layout='wide')
 
 # Show appropriate sidebar links for the role of the currently logged in user
 SideBarLinks()
@@ -17,7 +17,7 @@ st.write('### What would you like to do today?')
 st.write("")  # Spacer
 st.write("")  # Spacer
 
-col1, col2, col3 = st.columns(3, gap="large")
+col1, col2, col3, col4 = st.columns(4, gap="large")  # Add one more column for the new button
 
 with col1:
     st.markdown(
@@ -57,3 +57,16 @@ with col3:
     )
     if st.button("View Metrics", type="primary"):
         st.switch_page("pages/Adv_Popularjobs.py")
+
+with col4:
+    st.markdown(
+        """
+        <div class="card">
+            <h3>👨‍🏫 Add New Advisor</h3>
+            <p>Add a new advisor to the system.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    if st.button("Add Advisor", type="primary"):
+        st.switch_page("pages/Adv_Add_Advisor.py")  # Switch to the Add Advisor page
