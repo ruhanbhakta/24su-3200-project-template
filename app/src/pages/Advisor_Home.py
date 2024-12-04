@@ -17,7 +17,7 @@ st.write('### What would you like to do today?')
 st.write("")  # Spacer
 st.write("")  # Spacer
 
-col1, col2, col3, col4 = st.columns(4, gap="large")  # Add one more column for the new button
+col1, col2, col3, col4, col5, col6 = st.columns(6, gap="large")  # Add one more column for the new button
 
 with col1:
     st.markdown(
@@ -70,3 +70,29 @@ with col4:
     )
     if st.button("Add Advisor", type="primary"):
         st.switch_page("pages/Adv_Add_Advisor.py")  # Switch to the Add Advisor page
+
+with col5:
+    st.markdown(
+        """
+        <div class="card">
+            <h3>👨‍🏫 Update Student's Advisor </h3>
+            <p>Assign a new advisor to a student.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    if st.button("Assign Advisor", type="primary"):
+        st.switch_page("pages/Adv_Assign.py")  # Switch to the Add Advisor page
+
+with col6:
+    st.markdown(
+        """
+        <div class="card">
+            <h3>👨‍🏫 Delete Job Posting </h3>
+            <p>Delete Job Posting</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    if st.button("Delete Posting", type="primary"):
+        st.switch_page("pages/Adv_Delete.py")  # Switch to the Add Advisor page

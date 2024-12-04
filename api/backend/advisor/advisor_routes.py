@@ -174,3 +174,47 @@ def add_advisor():
         # Log the error and return an error response
         current_app.logger.error(f"Error adding advisor: {e}")
         return jsonify({"error": "Failed to add advisor"}), 500
+
+from flask import Blueprint, request, jsonify, current_app
+from backend.db_connection import db
+
+advisor = Blueprint('advisor', __name__)
+
+@advisor.route('/student/<int:student_id>/advisor', methods=['PUT'])
+def update_student_advisor(student_id):
+    try:
+        # Get the new advisorId from the request body
+        data = request.get_json()
+        advisor_id = data.get('advisorId')
+
+        # Validate that the advisorId is provided
+        if not advisor_id:
+            return jsonify({"error": "advisorId is required"}), 400
+
+        # Query to update the advisor for the student
+        query = '''
+            UPDATE Students
+            SET advisorId = %s
+            WHERE studentId = %s;
+        '''
+
+        # Get a database connection
+        connection = db.connect()
+        cursor = connection.cursor()
+
+        # Execute the update query
+        cursor.execute(query, (advisor_id, student_id))
+        connection.commit()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        # Return success message
+        return jsonify({"message": f"Student's advisor updated successfully"}), 200
+
+    except Exception as e:
+        # Log the error and return a response
+        current_app.logger.error(f"Error updating advisor for student {student_id}: {e}")
+        return jsonify({"error": "Failed to update advisor"}), 500
+
