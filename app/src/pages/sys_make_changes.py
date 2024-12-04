@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 SideBarLinks()
 
-# Base URL of the Flask application (updated to http://api:4000/sysadmin)
+# Base URL of the Flask application 
 BASE_URL = "http://api:4000/sysadmin"  
 # Function to call the `/students/<student_id>/update_major` route (PUT)
 def update_student_major(student_id, new_major):
@@ -28,9 +28,16 @@ def add_skill(skill_name):
     return response.json()
 
 # Function to call the `/job_postings/<job_id>/delete` route (DELETE)
+# Function to call the `/job_postings/<job_id>/delete` route (DELETE)
 def delete_alumni(id):
-    response = requests.delete(f"{BASE_URL}/job_postings/{id}/delete")
-    return response.json()
+    # Adjusted URL to remove redundant 'delete' in the path
+    response = requests.delete(f"{BASE_URL}/db/delete_alumni/{id}")
+    
+    # Check for successful deletion and handle the response
+    if response.status_code == 200:
+        return response.json()  # Return JSON response if deletion is successful
+    else:
+        return {"error": "Failed to delete alumni", "status_code": response.status_code}
 
 # Streamlit UI
 st.title("System Administrator Dashboard - Manage Data")
