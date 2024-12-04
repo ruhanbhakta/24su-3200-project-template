@@ -46,23 +46,29 @@ def student_job_postings():
 @student.route('/matching_job_postings', methods=['GET'])
 def student_matching_postings():
     query = '''
-        SELECT DISTINCT
-        j.jobId,
-        j.title,
-        ps.skillId,
-        s.name AS SkillName,
-        ps.expectedProficiency
+        SELECT
+            jp.jobId,
+            jp.title,
+            jp.location,
+            jp.industry,
+            s.name AS skill_name,
+            COUNT(a.appId) AS num_applications
         FROM
-        JobPosting j
+            JobPosting jp
         JOIN
-        PostingSkills ps ON j.jobId = ps.jobId
+            PostingSkills ps ON jp.jobId = ps.jobId
         JOIN
-        StudentSkills ss ON ps.skillId = ss.skillId
+            StudentSkills ss ON ps.skillId = ss.skillId
         JOIN
-        Skills s ON ps.skillId = s.skillId
+            Skills s ON ss.skillId = s.skillId
+        LEFT JOIN
+            Applications a ON jp.jobId = a.jobId
         WHERE
-        ss.studentId = 1
-        AND ss.proficiency >= ps.expectedProficiency;
+            ss.studentId = 3
+        GROUP BY
+            jp.jobId, s.skillId
+        ORDER BY
+            num_applications DESC;
         '''
     try:
         # Get a database connection
