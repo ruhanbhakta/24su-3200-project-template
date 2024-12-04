@@ -52,20 +52,21 @@ def student_dashboard():
 def student_sorter():
     query = '''
         SELECT
-            s.studentId,
-            s.firstName,
-            s.lastName,
-            sk.name AS skillName,
-            ss.proficiency AS skillProficiency
+    s.studentId,
+    s.firstName,
+    s.lastName,
+    COUNT(DISTINCT sk.skillId) AS uniqueSkillCount
         FROM
             Students s
         JOIN
             StudentSkills ss ON s.studentId = ss.studentId
         JOIN
             Skills sk ON ss.skillId = sk.skillId
+        GROUP BY
+            s.studentId, s.firstName, s.lastName
         ORDER BY
-            ss.proficiency DESC, s.lastName, s.firstName;
-            '''
+            uniqueSkillCount;
+        '''
     try:
         # Get a database connection
         connection = db.connect()
