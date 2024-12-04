@@ -4,42 +4,25 @@ from backend.db_connection import db
 recruiting = Blueprint('recruiting', __name__)
 
 # All of the applications on the job table based on (sorted by skill match and GPA)
-@recruiting.route('/applicants/sorted', methods=['GET'])
-def applicants_sorted():
+from flask import request, jsonify, current_app
+
+@recruiting.route('/applicants/sorted/<int:job_id>', methods=['GET'])
+def applicants_sorted(job_id):
     query = '''
-        SELECT 
-            s.firstName, 
-            s.lastName, 
-            s.major, 
-            s.GPA,
-            ROUND(
-                (COUNT(DISTINCT ss.skillId) * 100.0) / 
-                (SELECT COUNT(DISTINCT ps.skillId) 
-                 FROM PostingSkills ps 
-                 JOIN JobPosting jb ON ps.jobId = jb.jobId), 
-                2
-            ) AS skillMatchPercentage
-        FROM 
-            Students s
-        LEFT JOIN 
-            StudentSkills ss ON s.studentId = ss.studentId
-        LEFT JOIN 
-            Applications a ON s.studentId = a.studentId
-        LEFT JOIN 
-            JobPosting jb ON a.jobId = jb.jobId
-        LEFT JOIN 
-            PostingSkills ps ON jb.jobId = ps.jobId AND ss.skillId = ps.skillId
-        GROUP BY 
-            s.studentId, s.firstName, s.lastName, s.major, s.GPA
-        ORDER BY 
-            s.GPA DESC, 
-            skillMatchPercentage DESC;
+        SELECT DISTINCT s.firstName, s.lastName, s.email, jp.jobId, sk.name AS skillName
+        FROM Students s
+        JOIN StudentSkills ss ON s.studentId = ss.studentId
+        JOIN PostingSkills ps ON ss.skillId = ps.skillId
+        JOIN JobPosting jp ON ps.jobId = jp.jobId
+        JOIN Skills sk ON ss.skillId = sk.skillId
+        WHERE jp.jobId = %s
     '''
     try:
         connection = db.connect()
         cursor = connection.cursor()
 
-        cursor.execute(query)
+        # Execute the query with the provided job_id
+        cursor.execute(query, (job_id,))
         applicants = cursor.fetchall()
 
         cursor.close()
@@ -48,7 +31,7 @@ def applicants_sorted():
         return jsonify(applicants), 200
 
     except Exception as e:
-        current_app.logger.error(f"Error fetching sorted applicants: {e}")
+        current_app.logger.error(f"Error fetching sorted applicants for jobId {job_id}: {e}")
         return jsonify({"error": "Failed to fetch sorted applicants"}), 500
 
 
