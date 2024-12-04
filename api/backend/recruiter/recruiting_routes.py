@@ -6,7 +6,7 @@ recruiting = Blueprint('recruiting', __name__)
 # All of the applications on the job table based on (sorted by skill match and GPA)
 from flask import request, jsonify, current_app
 
-@recruiting.route('/applicants/sorted/<int:job_id>', methods=['GET'])
+@recruiting.route('/skillsort/<int:job_id>', methods=['GET'])
 def applicants_sorted(job_id):
     query = '''
         SELECT DISTINCT s.firstName, s.lastName, s.email, jp.jobId, sk.name AS skillName
@@ -36,7 +36,7 @@ def applicants_sorted(job_id):
 
 
 # Average pay of all listings
-@recruiting.route('/applicants/listing/salary', methods=['GET'])
+@recruiting.route('/salary', methods=['GET'])
 def listing_salary():
     query = '''
         SELECT 
@@ -61,7 +61,7 @@ def listing_salary():
         return jsonify({"error": "Failed to fetch average salary of job listings"}), 500
 
 
-# Average pay of all hired (Alumni)
+# Average pay of all Alumni
 @recruiting.route('/applicants/hired/salary', methods=['GET'])
 def alumni_salary():
     query = '''
