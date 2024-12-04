@@ -30,3 +30,8 @@ if st.button('View Server Load',
              type='primary',
              use_container_width=True):
   st.switch_page('pages/sys_server.py')
+
+if st.button('Update DB Data', 
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/sys_make_changes.py')
