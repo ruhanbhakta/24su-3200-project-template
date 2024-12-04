@@ -52,7 +52,7 @@ if st.button("Co-op Advisor",
     # finally, we ask streamlit to switch to another page, in this case, the 
     # landing page for this particular user type
     logger.info("Logging in as Co-op Advisor")
-    st.switch_page('pages/Coop_Advisor_Home.py')
+    st.switch_page('pages/Advisor_Home.py')
 
 if st.button("Marketing Analyst", 
             type = 'primary', 
