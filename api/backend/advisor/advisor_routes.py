@@ -178,8 +178,6 @@ def add_advisor():
 from flask import Blueprint, request, jsonify, current_app
 from backend.db_connection import db
 
-advisor = Blueprint('advisor', __name__)
-
 @advisor.route('/student/<int:student_id>/advisor', methods=['PUT'])
 def update_student_advisor(student_id):
     try:
