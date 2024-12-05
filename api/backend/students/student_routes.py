@@ -251,3 +251,33 @@ def student_employer_numalum():
         current_app.logger.error(f"Error fetching employers and number of alumni: {e}")
         return jsonify({"error": "Failed to fetch employers and number of alumni"}), 500
     
+    
+# POST route for the student to leave a review on the employer.
+@student.route('/reviews/add', methods=['POST'])
+def add_skill():
+    try:
+        data = request.get_json()
+        employer_id = data.get("employerId")
+        student_review = data.get("review")
+
+        if not employer_id or student_review:
+            return jsonify({"Error:" "Please input both a valid Employer ID and Review"}), 400
+
+        query = '''
+            INSERT INTO ReviewsOnEmployers (employerId, review)
+            VALUES (%s, %s);
+        '''
+
+
+        connection = db.connect()
+        cursor = connection.cursor()
+        cursor.execute(query, (employer_id, student_review))
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+
+        return jsonify({"Message": "Successfully added review!"}), 201
+    except Exception as e:
+        current_app.logger.error(f"Error adding review: {e}")
+        return jsonify({"error": "Failed to add review"}), 500
