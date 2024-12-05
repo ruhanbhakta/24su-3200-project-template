@@ -152,7 +152,6 @@ def update_student_review():
             if field not in review_data:
                 return jsonify({"error": f"Missing required field: {field}"}), 400
 
-        # Construct the SQL query to update the review
         query = '''
         UPDATE ReviewsOnEmployers
         SET review = %s
@@ -208,7 +207,7 @@ def delete_student_review():
 
         if not review:
             current_app.logger.error(f"Review with ID {review_id} not found")
-            return jsonify({"error": "Review not found"}), 404  # Review doesn't exist
+            return jsonify({"error": "Review not found"}), 404  
 
         current_app.logger.info(f"Review with ID {review_id} found: {review}")
 
