@@ -72,7 +72,7 @@ st.markdown(
 ALUMNI_COUNT_API = 'http://api:4000/marketing/alumnicount'
 COOP_COUNT_API = 'http://api:4000/marketing/coopcount'
 
-# Create a 2-column layout for alumni and co-op data
+
 col1, col2 = st.columns(2, gap="large")
 
 # Alumni Count Section
@@ -125,7 +125,7 @@ with col2:
                 df = pd.DataFrame(data)
                 df.rename(columns={'EmployerName': 'Employer Name', 'CoopCount': 'Co-op Applications'}, inplace=True)
                 
-                # Display data in a styled table
+                
                 st.markdown(
                     """
                     <div class="data-section">

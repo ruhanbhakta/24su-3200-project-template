@@ -4,7 +4,7 @@ from modules.nav import SideBarLinks
 
 SideBarLinks()
 # Base URL for your Flask backend
-BASE_URL = "http://api:4000/student"  # Update to your actual API URL
+BASE_URL = "http://api:4000/student"  
 
 # Function to update student review
 def update_student_review(review_id, review):
@@ -24,7 +24,7 @@ review = st.text_area("New Review Text", height=150)
 # Button to submit the data
 if st.button("Update Review"):
     if review_id and review.strip():
-        # Send request to Flask API to update the student's review
+      
         result = update_student_review(review_id, review)
         
         # Show the result from the Flask API

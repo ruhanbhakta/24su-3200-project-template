@@ -106,7 +106,7 @@ if st.button('Fetch Data', type='primary', use_container_width=True):
                 labels={'Job Postings Count': 'Number of Job Postings', 'Company Size': 'Company Size'},
                 color='Company Size', 
                 text='Job Postings Count',
-                template='plotly_dark'  # Modern Plotly dark theme for charts
+                template='plotly_dark' 
             )
             st.plotly_chart(bar_chart, use_container_width=True)
             

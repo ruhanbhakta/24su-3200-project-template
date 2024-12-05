@@ -5,12 +5,12 @@ from modules.nav import SideBarLinks
 
 # Configure logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)  # Ensure proper logging configuration
+logging.basicConfig(level=logging.INFO) 
 
 # Initialize sidebar navigation
 SideBarLinks()
 
-# Base URL of the Flask application
+# Base URL
 BASE_URL = "http://api:4000/advisor" 
 
 def delete_job(job_id):
@@ -37,12 +37,11 @@ def delete_job(job_id):
 st.header("Delete Job")
 
 # Input field for job ID
-job_id = st.number_input("Enter Job ID", min_value=1, step=1, format="%d")  # Forces integer display
-
+job_id = st.number_input("Enter Job ID", min_value=1, step=1, format="%d") 
 # Button to trigger deletion
 if st.button("Delete Job from Database"):
     if job_id > 0:
-        result = delete_job(int(job_id))  # Explicitly convert to integer
+        result = delete_job(int(job_id))
         st.json(result)
     else:
         st.error("Please enter a valid Job ID.")

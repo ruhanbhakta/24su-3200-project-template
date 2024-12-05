@@ -69,7 +69,7 @@ if st.button("Fetch Sorted Students", type="primary", key="fetch_sorter_btn"):
             if data:
                 # Display as a table
                 st.subheader("Students Sorted by Skills")
-                st.table(data)  # Display data in a tabular format
+                st.table(data) 
                 logger.info("Data successfully displayed as a table.")
             else:
                 st.warning("No data available.")

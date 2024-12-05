@@ -5,13 +5,13 @@ from modules.nav import SideBarLinks
 
 # Configure logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)  # Ensure proper logging configuration
+logging.basicConfig(level=logging.INFO)  
 
 # Initialize sidebar navigation
 SideBarLinks()
 
 # Base URL of the Flask application
-BASE_URL = "http://api:4000/student"  # Update this to match your API's actual base URL
+BASE_URL = "http://api:4000/student" 
 
 def delete_review(review_id):
     """
@@ -22,7 +22,7 @@ def delete_review(review_id):
         
         # Handle the response
         if response.status_code == 200:
-            return response.json()  # Successful deletion
+            return response.json() 
         else:
             return {
                 "error": "Failed to delete review",
@@ -37,12 +37,11 @@ def delete_review(review_id):
 st.header("Delete Student Review")
 
 # Input field for review ID
-review_id = st.number_input("Enter Review ID", min_value=1, step=1, format="%d")  # Forces integer display
-
+review_id = st.number_input("Enter Review ID", min_value=1, step=1, format="%d") 
 # Button to trigger deletion
 if st.button("Delete Review from Database"):
     if review_id > 0:
-        result = delete_review(int(review_id))  # Explicitly convert to integer
+        result = delete_review(int(review_id)) 
         st.json(result)
     else:
         st.error("Please enter a valid Review ID.")

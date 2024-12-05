@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # Base URL for your Flask backend
-BASE_URL = "http://api:4000/advisor"  # Update to your actual API URL
+BASE_URL = "http://api:4000/advisor"  
 
 # Function to update student's advisor ID
 def update_student_advisor(student_id, advisor_id):
@@ -22,7 +22,7 @@ advisor_id = st.number_input("New Advisor ID", min_value=1, step=1)
 # Button to submit the data
 if st.button("Update Advisor"):
     if student_id and advisor_id:
-        # Send request to Flask API to update the student's advisor
+        
         result = update_student_advisor(student_id, advisor_id)
         
         # Show the result from the Flask API

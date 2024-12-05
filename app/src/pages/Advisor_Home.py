@@ -46,7 +46,6 @@ with col2:
     if st.button("View Breakdown", type="primary", key="sorter"):
         st.switch_page("pages/Adv_Sorter.py")
 
-# Spacer between rows
 st.write("")
 st.write("")
 
@@ -79,7 +78,6 @@ with col4:
     if st.button("Add Advisor", type="primary", key="add_advisor"):
         st.switch_page("pages/Adv_Add_Advisor.py")
 
-# Spacer between rows
 st.write("")
 st.write("")
 

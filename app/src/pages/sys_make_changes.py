@@ -28,7 +28,6 @@ def add_skill(skill_name):
     return response.json()
 
 # Function to call the `/job_postings/<job_id>/delete` route (DELETE)
-# Function to call the `/job_postings/<job_id>/delete` route (DELETE)
 def delete_alumni(id):
     # Adjusted URL to remove redundant 'delete' in the path
     response = requests.delete(f"{BASE_URL}/db/delete_alumni/{id}")

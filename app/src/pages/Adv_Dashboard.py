@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 # Streamlit page configuration
 st.set_page_config(
-    page_title="Job Postings by Company Size",
+    page_title="Advisor Dashboard",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -71,8 +71,8 @@ SideBarLinks()
 st.markdown(
     """
     <div class="main-header">
-        <h1>📈 Job Postings by Company Size</h1>
-        <p>Analyze job postings based on company size. Fetch the latest data below!</p>
+        <h1>📈 Student Dashboard</h1>
+        <p>View student application data!</p>
     </div>
     """,
     unsafe_allow_html=True,

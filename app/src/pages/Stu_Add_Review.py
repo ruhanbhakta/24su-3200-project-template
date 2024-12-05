@@ -11,7 +11,7 @@ from modules.nav import SideBarLinks
 # Initialize sidebar navigation
 SideBarLinks()
 
-# Base URL of the Flask application
+# Base URL
 BASE_URL = "http://api:4000/student"
 
 # Function to call the `/add_employer_review` route (POST)
@@ -29,10 +29,10 @@ def add_employer_review(employer_id, review):
         logger.error(f"Error while adding employer review: {e}")
         return {"error": "Failed to connect to the server"}
 
-# Streamlit UI
+
 st.title("Employer Reviews Dashboard")
 
-# Section: Add a New Employer Review
+
 st.header("Add a New Employer Review")
 
 # Input fields for employer review

@@ -14,8 +14,8 @@ st.write('')
 st.write('')
 st.write('### What would you like to do today?')
 
-st.write("")  # Spacer
-st.write("")  # Spacer
+st.write("")  
+st.write("")  
 
 col1, col2, col3 = st.columns(3, gap="large")
 
