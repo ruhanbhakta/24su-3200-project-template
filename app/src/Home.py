@@ -42,6 +42,13 @@ st.write('### HI! Which user would you like to log in as?')
 # functionality, we put a button on the screen that the user 
 # can click to MIMIC logging in as that mock user. 
 
+if st.button('Act as Student', 
+            type = 'primary', 
+            use_container_width=True):
+    st.session_state['authenticated'] = True
+    st.session_state['role'] = 'student'
+    st.switch_page('pages/Student_Home.py')
+
 if st.button("Co-op Advisor", 
             type = 'primary', 
             use_container_width=True):
@@ -79,20 +86,6 @@ if st.button("System Admin",
     st.switch_page('pages/Sysadmin_Home.py')
 
 
-if st.button('Act as Mohammad, an USAID worker', 
-            type = 'primary', 
-            use_container_width=True):
-    st.session_state['authenticated'] = True
-    st.session_state['role'] = 'usaid_worker'
-    st.session_state['first_name'] = 'Mohammad'
-    st.switch_page('pages/10_USAID_Worker_Home.py')
-
-if st.button('Act as Student', 
-            type = 'primary', 
-            use_container_width=True):
-    st.session_state['authenticated'] = True
-    st.session_state['role'] = 'student'
-    st.switch_page('pages/Student_Home.py')
 
 
 

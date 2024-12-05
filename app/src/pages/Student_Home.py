@@ -28,3 +28,8 @@ if st.button("Update a Review Previously Posted",
              type='primary',
              use_container_width=True):
   st.switch_page('pages/Stu_Update_Review.py')
+
+if st.button("Delete a Review Previously Posted",
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/Stu_Delete_Review.py')
