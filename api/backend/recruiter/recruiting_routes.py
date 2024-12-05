@@ -120,3 +120,79 @@ def applicants_by_major():
     except Exception as e:
         current_app.logger.error(f"Error fetching applications by major: {e}")
         return jsonify({"error": "Failed to fetch applications by major"}), 500
+
+# POST route for the employer to add a new job posting with title, pay, and location.
+@recruiter.route('/posting/add', methods=['POST'])
+def add_job_posting_simple():
+    try:
+
+        data = request.get_json()
+        title = data.get("title")
+        salary = data.get("salary")
+        location = data.get("location")
+        recruiter_id = data.get("recruiterId")
+
+        if not all([title, salary, location, recruiter_id]):
+            return jsonify({"Error": "Please provide all required fields: title, salary, location, recruiterId"}), 400
+
+        # Insert a new job posting 
+        query = '''
+            INSERT INTO JobPosting (title, salary, location, recruiterId)
+            VALUES (%s, %s, %s, %s);
+        '''
+
+        # Connect to the database
+        connection = db.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(query, (title, salary, location, recruiter_id))
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+
+        # Success message
+        return jsonify({"Message": "Job posting added successfully!"}), 201
+
+        #Error Message
+    except Exception as e:
+        return jsonify({"Error": str(e)}), 500
+
+    
+#DELETE route for the student to remove any reviews they had
+@sysadmin.route('/reviews/delete/<int:review_id>', methods=['DELETE'])
+def delete_review(alumni_id):
+    query = '''
+        DELETE FROM ReviewsOnEmployers
+        WHERE reviewId = %s;
+    '''
+    try:
+        # Connect to the database
+        connection = db.connect()
+        cursor = connection.cursor()
+
+        # Log the deletion attempt
+        current_app.logger.info(f"Attempting to delete review with reviewId: {review_id}")
+
+        # Execute the delete query
+        cursor.execute(query, (review_id,))
+        connection.commit()
+
+        if cursor.rowcount == 0:
+            # Log and return error if no rows were affected
+            current_app.logger.warning(f"No review found with reviewId: {review_id}")
+            return jsonify({"error": "Review not found"}), 404
+
+        # Close the cursor and the connection
+        cursor.close()
+        connection.close()
+
+        # Log success and return response
+        current_app.logger.info(f"Successfully deleted review with reviewId: {review_id}")
+        return jsonify({"message": "Review deleted successfully"}), 200
+
+    except Exception as e:
+        # Log the exception and return a generic error message
+        current_app.logger.error(f"Error deleting review: {e}")
+        return jsonify({"error": "Failed to delete review"}), 500
+
