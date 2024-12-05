@@ -113,7 +113,7 @@ with col1:
 # Co-op Count Section
 with col2:
     st.header("💼 Top Companies by Co-op Applications")
-    if st.button("Fetch Co-op Count Data", type="primary", key="coop_btn"):
+    if st.button("Fetch Popular Companies", type="primary", key="coop_btn"):
         try:
             logger.info("Fetching data from the /marketing/coopcount endpoint.")
             response = requests.get(COOP_COUNT_API)

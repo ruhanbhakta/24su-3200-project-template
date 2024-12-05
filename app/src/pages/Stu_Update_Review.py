@@ -1,6 +1,8 @@
 import streamlit as st
 import requests
+from modules.nav import SideBarLinks
 
+SideBarLinks()
 # Base URL for your Flask backend
 BASE_URL = "http://api:4000/student"  # Update to your actual API URL
 

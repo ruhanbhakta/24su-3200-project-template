@@ -138,7 +138,7 @@ def get_employer_coop_count():
         LEFT JOIN Applications a ON j.jobId = a.jobId
         GROUP BY c.empId
         ORDER BY CoopCount DESC
-        LIMIT 5;
+        LIMIT 10;
         """
         cursor.execute(query)
         result = cursor.fetchall()

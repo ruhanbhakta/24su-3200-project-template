@@ -27,7 +27,7 @@ def AdvisorHome():
     st.sidebar.page_link("pages/Advisor_Home.py", label="Home Page", icon='🛜')
 
 def AdvDashboard():
-    st.sidebar.page_link("pages/Adv_Dashboard.py", label="Students Dashboard", icon='📈')
+    st.sidebar.page_link("pages/Adv_Dashboard.py", label="Students Dashboard", icon='📊')
 
 def AdvSorter():
     st.sidebar.page_link("pages/Adv_Sorter.py", label="Sorted Students", icon='🔁')
