@@ -44,8 +44,8 @@ def student_job_postings():
         return jsonify({"error": "Failed to fetch jobs"}), 500
 
 #GET route for finding job postings that match student skills
-@student.route('/matching_job_postings', methods=['GET'])
-def student_matching_postings():
+@student.route('/matching_job_postings/<int:student_id>', methods=['GET'])
+def student_matching_postings(student_id):
     query = '''
         SELECT
             jp.jobId,
@@ -65,7 +65,7 @@ def student_matching_postings():
         LEFT JOIN
             Applications a ON jp.jobId = a.jobId
         WHERE
-            ss.studentId = 3
+            ss.studentId = %s
         GROUP BY
             jp.jobId, s.skillId
         ORDER BY
@@ -76,8 +76,8 @@ def student_matching_postings():
         connection = db.connect()
         cursor = connection.cursor()
 
-        # Execute query
-        cursor.execute(query)
+        # Execute query with the provided student_id
+        cursor.execute(query, (student_id,))
         student_matching_postings = cursor.fetchall()
 
         # Close the cursor and connection
@@ -88,8 +88,8 @@ def student_matching_postings():
 
     except Exception as e:
         # Log the error and return a response
-        current_app.logger.error(f"Error fetching matching jobs: {e}")
-        return jsonify({"error": "Failed to fetch matching jobs"}), 500
+        current_app.logger.error(f"Error fetching matching jobs for student {student_id}: {e}")
+    return jsonify({"error": "Failed to fetch matching jobs"}), 500
 
      
 # POST route for the student to leave a review on the employer.
