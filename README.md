@@ -18,6 +18,6 @@ This app caters to the needs of 5 different user personas: Students, Recruiters,
 
 ## Contributors
 
-Made by Ruhan, Jeff, Borys, Spencer, and Yuan.
+Made by Ruhan Bhakta, Spencer Chin, Borys Kocherev, Yuan Feng, Sunghyun Jun
 
 
