@@ -11,8 +11,8 @@ Built for students seeking their first chance, recruiters who value efficiency, 
 This app caters to the needs of 5 different user personas: Students, Recruiters, Advisors, System Administrators, and Marketing Analysts
 
 ## Instructions to Demo
-To demo the application, you will need to build and start the docker containers. 
-In the terminal, paste the following commands:
+* Clone this repository
+* Create a .env file having values for the following parameters: SECRET_KEY, DB_USER, DB_HOST, DB_PORT, DB_NAME, MYSQL_ROOT_PASSWORD
 * Docker compose build
 * Docker compose up
 
