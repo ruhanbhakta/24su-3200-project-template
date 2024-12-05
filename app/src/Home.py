@@ -91,7 +91,7 @@ if st.button('Act as Student',
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
-    st.session_state['role'] = 'administrator'
+    st.session_state['role'] = 'student'
     st.switch_page('pages/Student_Home.py')
 
 

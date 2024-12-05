@@ -37,11 +37,17 @@ def AdvPop():
 
 #### ------------------------ System Admin Role ------------------------
 def SysAdmin():
-    st.sidebar.page_link("pages/Sysadmin_Home.py", label="System Admin", icon='🖥️')
+    st.sidebar.page_link("pages/Sysadmin_Home.py", label="System Admin", icon='🏠')
     st.sidebar.page_link("pages/sys_health.py", label='Active Connections', icon='🏢')
     st.sidebar.page_link("pages/sys_conn_limit.py", label="Allowed Connections", icon= "⚠️")
     st.sidebar.page_link("pages/sys_conn_limit.py", label="Server Load", icon= "🏋🏻")
     st.sidebar.page_link("pages/sys_make_changes.py", label="Update DB Information")
+
+#### ------------------------ Students Role ------------------------
+def Student():
+    st.sidebar.page_link("pages/Student_Home.py", label="Student Home", icon='🖥️')
+    st.sidebar.page_link("pages/Stu_Numapps.py", label='Active Connections', icon='🏢')
+  
 
 # --------------------------------Links Function -----------------------------------------------
 def SideBarLinks(show_home=False):
