@@ -122,7 +122,7 @@ def applicants_by_major():
         return jsonify({"error": "Failed to fetch applications by major"}), 500
 
 # POST route for the employer to add a new job posting with title, pay, and location.
-@recruiter.route('/posting/add', methods=['POST'])
+@recruiting.route('/posting/add', methods=['POST'])
 def add_job_posting_simple():
     try:
 
@@ -159,37 +159,44 @@ def add_job_posting_simple():
         return jsonify({"Error": str(e)}), 500
 
 #DELETE route for the recruiter to delete a job posting.
-@recruiter.route('/posting/delete/<int:job_id>', methods=['DELETE'])
+@recruiting.route('/jobposting/<int:job_id>', methods=['DELETE'])
 def delete_job_posting(job_id):
-    query = '''
-        DELETE FROM JobPosting
-        WHERE jobId = %s;
-    '''
     try:
+        # Queries to delete dependent records and the job posting
+        query_delete_skills = '''
+            DELETE FROM PostingSkills WHERE jobId = %s;
+        '''
+        query_delete_applications = '''
+            DELETE FROM Applications WHERE jobId = %s;
+        '''
+        query_delete_job = '''
+            DELETE FROM JobPosting WHERE jobId = %s;
+        '''
+
+        # Establish a database connection
         connection = db.connect()
         cursor = connection.cursor()
 
-        #Log message
-        current_app.logger.info(f"Attempting to delete job posting with jobId: {job_id}")
-
-        # Start deleting by execution
-        cursor.execute(query, (job_id,))
+        # Delete dependent records in PostingSkills
+        cursor.execute(query_delete_skills, (job_id,))
+        # Delete dependent records in Applications
+        cursor.execute(query_delete_applications, (job_id,))
+        # Delete the job posting
+        cursor.execute(query_delete_job, (job_id,))
         connection.commit()
 
+        # Check if the job posting was deleted
         if cursor.rowcount == 0:
-            # Log and return error if no rows were affected
-            current_app.logger.warning(f"No job posting found with jobId: {job_id}")
             return jsonify({"error": "Job posting not found"}), 404
 
+        # Close the cursor and connection
         cursor.close()
         connection.close()
 
-        #Success Message
-        current_app.logger.info(f"Successfully deleted job posting with jobId: {job_id}")
-        return jsonify({"message": "Job posting deleted successfully"}), 200
+        # Return a success message
+        return jsonify({"message": f"Job posting with ID {job_id} deleted successfully"}), 200
 
     except Exception as e:
-        # Error exception
-        current_app.logger.error(f"Error deleting job posting: {e}")
-        return jsonify({"error": "Failed to delete job posting"}), 500
-
+        # Log the error and return a response
+        current_app.logger.error(f"Error deleting job posting {job_id}: {e}")
+        return jsonify({"error": f"Failed to delete Job record: {str(e)}"}), 500
