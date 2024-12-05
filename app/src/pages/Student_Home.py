@@ -24,7 +24,7 @@ if st.button('Add a Review on Previous or Current Employer',
              use_container_width=True):
   st.switch_page('pages/Stu_Add_Review.py')
 
-if st.button("View Classification Demo",
+if st.button("Update a Review Previously Posted",
              type='primary',
              use_container_width=True):
-  st.switch_page('pages/13_Classification.py')
+  st.switch_page('pages/Stu_Update_Review.py')

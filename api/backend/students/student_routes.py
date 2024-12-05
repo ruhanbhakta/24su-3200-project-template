@@ -104,7 +104,7 @@ def update_student_review():
 
         # Construct the SQL query to update the review
         query = '''
-        UPDATE ReviewsOnStudents
+        UPDATE ReviewsOnEmployers
         SET review = %s
         WHERE reviewId = %s
         '''
