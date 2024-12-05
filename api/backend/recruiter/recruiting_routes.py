@@ -6,7 +6,7 @@ recruiting = Blueprint('recruiting', __name__)
 # All of the applications on the job table based on (sorted by skill match and GPA)
 from flask import request, jsonify, current_app
 
-@recruiting.route('/skillsort/<int:job_id>', methods=['GET'])
+@recruiting.route('/skillmatch/<int:job_id>', methods=['GET'])
 def applicants_sorted(job_id):
     query = '''
         SELECT DISTINCT s.firstName, s.lastName, s.email, jp.jobId, sk.name AS skillName
@@ -34,91 +34,43 @@ def applicants_sorted(job_id):
         current_app.logger.error(f"Error fetching sorted applicants for jobId {job_id}: {e}")
         return jsonify({"error": "Failed to fetch sorted applicants"}), 500
 
-
-# Average pay of all listings
-@recruiting.route('/salary', methods=['GET'])
-def listing_salary():
+# Sort applications by major
+@recruiting.route('/majorsort/<int:job_id>', methods=['GET'])
+def applicants_by_major(job_id):
     query = '''
-        SELECT 
-            AVG(jb.salary) AS averageSalary
-        FROM 
-            JobPosting jb;
-    '''
-    try:
-        connection = db.connect()
-        cursor = connection.cursor()
-
-        cursor.execute(query)
-        average_salary = cursor.fetchall()
-
-        cursor.close()
-        connection.close()
-
-        return jsonify(average_salary), 200
-
-    except Exception as e:
-        current_app.logger.error(f"Error fetching average salary of job listings: {e}")
-        return jsonify({"error": "Failed to fetch average salary of job listings"}), 500
-
-
-# Average pay of all Alumni
-@recruiting.route('/applicants/hired/salary', methods=['GET'])
-def alumni_salary():
-    query = '''
-        SELECT 
-            AVG(a.salary) AS averageAlumniSalary
-        FROM 
-            Alumni a;
-    '''
-    try:
-        connection = db.connect()
-        cursor = connection.cursor()
-
-        cursor.execute(query)
-        average_alumni_salary = cursor.fetchall()
-
-        cursor.close()
-        connection.close()
-
-        return jsonify(average_alumni_salary), 200
-
-    except Exception as e:
-        current_app.logger.error(f"Error fetching average salary of alumni: {e}")
-        return jsonify({"error": "Failed to fetch average salary of alumni"}), 500
-
-
-# Number of applications by major
-@recruiting.route('/majorsort', methods=['GET'])
-def applicants_by_major():
-    query = '''
-        SELECT 
+        SELECT
+            s.studentId,
+            s.firstName,
+            s.lastName,
             s.major,
-            s.firstName, 
-            s.lastName
-        FROM 
+            s.email,
+            a.status,
+            a.date
+        FROM
             Students s
-        LEFT JOIN 
-            Applications a ON s.studentId = a.studentId
-        LEFT JOIN 
-            JobPosting jb ON a.jobId = jb.jobId
-        ORDER BY 
-            s.major DESC;
+        JOIN
+            Applications a
+        ON
+            s.studentId = a.studentId
+        WHERE
+            a.jobId = %s
+        ORDER BY
+            s.major ASC;
     '''
     try:
         connection = db.connect()
         cursor = connection.cursor()
-
-        cursor.execute(query)
+        
+        # Execute query with parameter
+        cursor.execute(query, (job_id,))
         applications_by_major = cursor.fetchall()
-
-        cursor.close()
-        connection.close()
 
         return jsonify(applications_by_major), 200
 
     except Exception as e:
         current_app.logger.error(f"Error fetching applications by major: {e}")
         return jsonify({"error": "Failed to fetch applications by major"}), 500
+
 
 # POST route for the employer to add a new job posting with title, pay, and location.
 @recruiting.route('/posting/add', methods=['POST'])
