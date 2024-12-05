@@ -10,7 +10,7 @@ Built for students seeking their first chance, recruiters who value efficiency, 
 
 This app caters to the needs of 5 different user personas: Students, Recruiters, Advisors, System Administrators, and Marketing Analysts
 
-## Instructions to Demo
+## How to Setup the Docker Containers
 * Clone this repository
 * Create a .env file having values for the following parameters: SECRET_KEY, DB_USER, DB_HOST, DB_PORT, DB_NAME, MYSQL_ROOT_PASSWORD
 * Build the images with _docker compose build_
