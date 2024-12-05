@@ -158,41 +158,38 @@ def add_job_posting_simple():
     except Exception as e:
         return jsonify({"Error": str(e)}), 500
 
-    
-#DELETE route for the student to remove any reviews they had
-@sysadmin.route('/reviews/delete/<int:review_id>', methods=['DELETE'])
-def delete_review(alumni_id):
+#DELETE route for the recruiter to delete a job posting.
+@recruiter.route('/posting/delete/<int:job_id>', methods=['DELETE'])
+def delete_job_posting(job_id):
     query = '''
-        DELETE FROM ReviewsOnEmployers
-        WHERE reviewId = %s;
+        DELETE FROM JobPosting
+        WHERE jobId = %s;
     '''
     try:
-        # Connect to the database
         connection = db.connect()
         cursor = connection.cursor()
 
-        # Log the deletion attempt
-        current_app.logger.info(f"Attempting to delete review with reviewId: {review_id}")
+        #Log message
+        current_app.logger.info(f"Attempting to delete job posting with jobId: {job_id}")
 
-        # Execute the delete query
-        cursor.execute(query, (review_id,))
+        # Start deleting by execution
+        cursor.execute(query, (job_id,))
         connection.commit()
 
         if cursor.rowcount == 0:
             # Log and return error if no rows were affected
-            current_app.logger.warning(f"No review found with reviewId: {review_id}")
-            return jsonify({"error": "Review not found"}), 404
+            current_app.logger.warning(f"No job posting found with jobId: {job_id}")
+            return jsonify({"error": "Job posting not found"}), 404
 
-        # Close the cursor and the connection
         cursor.close()
         connection.close()
 
-        # Log success and return response
-        current_app.logger.info(f"Successfully deleted review with reviewId: {review_id}")
-        return jsonify({"message": "Review deleted successfully"}), 200
+        #Success Message
+        current_app.logger.info(f"Successfully deleted job posting with jobId: {job_id}")
+        return jsonify({"message": "Job posting deleted successfully"}), 200
 
     except Exception as e:
-        # Log the exception and return a generic error message
-        current_app.logger.error(f"Error deleting review: {e}")
-        return jsonify({"error": "Failed to delete review"}), 500
+        # Error exception
+        current_app.logger.error(f"Error deleting job posting: {e}")
+        return jsonify({"error": "Failed to delete job posting"}), 500
 
