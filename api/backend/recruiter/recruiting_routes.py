@@ -88,22 +88,21 @@ def alumni_salary():
 
 
 # Number of applications by major
-@recruiting.route('/applicants/average/major', methods=['GET'])
+@recruiting.route('/majorsort', methods=['GET'])
 def applicants_by_major():
     query = '''
         SELECT 
             s.major,
-            COUNT(a.appId) AS averageApplications
+            s.firstName, 
+            s.lastName
         FROM 
             Students s
         LEFT JOIN 
             Applications a ON s.studentId = a.studentId
         LEFT JOIN 
             JobPosting jb ON a.jobId = jb.jobId
-        GROUP BY 
-            s.major
         ORDER BY 
-            averageApplications DESC;
+            s.major DESC;
     '''
     try:
         connection = db.connect()

@@ -284,8 +284,8 @@ def add_review():
         return jsonify({"error": "Failed to add review"}), 500
     
 #DELETE route for the student to remove any reviews they had
-@sysadmin.route('/reviews/delete/<int:review_id>', methods=['DELETE'])
-def delete_review(alumni_id):
+@student.route('/reviews/delete/<int:review_id>', methods=['DELETE'])
+def delete_review(review_id):
     query = '''
         DELETE FROM ReviewsOnEmployers
         WHERE reviewId = %s;
