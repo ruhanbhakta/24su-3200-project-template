@@ -8,7 +8,7 @@ Built for students seeking their first chance, recruiters who value efficiency, 
 
 ## Users
 
-This app caters to the needs of 5 different user personas: Students, Recruiters, Advisors, System Administrators, and Marketing Analysts
+This app caters to the needs of 4 different user personas: Students, Advisors, System Administrators, and Marketing Analysts
 
 ## How to Setup the Docker Containers
 * Clone this repository
