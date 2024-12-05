@@ -228,7 +228,8 @@ def delete_student_review():
 
 
 """
-Ready to go implemenations of the routes below, that need visual representation on the webapp.
+Ready to go implemenations of the routes below, that could be implemented as 
+additional features.
 
 
 @student.route('/matching_job_postings/<int:student_id>', methods=['GET'])
