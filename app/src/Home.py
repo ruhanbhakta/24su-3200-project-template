@@ -1,91 +1,89 @@
-##################################################
-# This is the main/entry-point file for the 
-# sample application for your project
-##################################################
-
-# Set up basic logging infrastructure
+# Import required libraries
 import logging
-logging.basicConfig(format='%(filename)s:%(lineno)s:%(levelname)s -- %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# import the main streamlit library as well
-# as SideBarLinks function from src/modules folder
 import streamlit as st
 from modules.nav import SideBarLinks
 
-# streamlit supports reguarl and wide layout (how the controls
-# are organized/displayed on the screen).
-st.set_page_config(layout = 'wide')
+# Set up logging configuration
+logging.basicConfig(
+    format='%(filename)s:%(lineno)s:%(levelname)s -- %(message)s', 
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
 
-# If a user is at this page, we assume they are not 
-# authenticated.  So we change the 'authenticated' value
-# in the streamlit session_state to false. 
+# Streamlit configuration
+st.set_page_config(
+    page_title="FreshMeet - Valuable Co-op Insights",
+    page_icon=":mortar_board:",
+    layout="wide"
+)
+
+# Initialize session state for authentication
 st.session_state['authenticated'] = False
 
-# Use the SideBarLinks function from src/modules/nav.py to control
-# the links displayed on the left-side panel. 
-# IMPORTANT: ensure src/.streamlit/config.toml sets
-# showSidebarNavigation = false in the [client] section
+# Configure sidebar links
+# Ensure 'src/.streamlit/config.toml' sets [client] showSidebarNavigation = false
 SideBarLinks(show_home=True)
 
 # ***************************************************
-#    The major content of this page
+#                   Page Content
 # ***************************************************
 
-# set the title of the page and provide a simple prompt. 
-logger.info("Loading the Home page of the app")
-st.title("FreshMeet- Valuable Co-op Insights")
+# Add a visually appealing banner at the top
+st.markdown(
+    """
+    <style>
+    .banner {
+        background-color: #f4f4f9;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        font-family: Arial, sans-serif;
+    }
+    .banner h1 {
+        color: #4A90E2;
+        margin: 0;
+        font-size: 2.5em;
+    }
+    .banner p {
+        color: #6c757d;
+        margin: 0;
+        font-size: 1.2em;
+    }
+    </style>
+    <div class="banner">
+        <h1>FreshMeet</h1>
+        <p>Your Gateway to Valuable Co-op Insights</p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# Page introduction
 st.write('\n\n')
-st.write('### HI! Which user would you like to log in as?')
+st.write('<h3 style="text-align: center;">Hi! Who would you like to log in as?</h3>', unsafe_allow_html=True)
+st.write('\n')
 
-# For each of the user personas for which we are implementing
-# functionality, we put a button on the screen that the user 
-# can click to MIMIC logging in as that mock user. 
-
-if st.button('Act as Student', 
-            type = 'primary', 
-            use_container_width=True):
+# Define a function to handle user role selection
+def authenticate_user(role, page_path, role_description):
+    """Authenticate and redirect to a specific page based on the role."""
     st.session_state['authenticated'] = True
-    st.session_state['role'] = 'student'
-    st.switch_page('pages/Student_Home.py')
+    st.session_state['role'] = role
+    logger.info(f"Logging in as {role_description}")
+    st.switch_page(page_path)
 
-if st.button("Co-op Advisor", 
-            type = 'primary', 
-            use_container_width=True):
-    # when user clicks the button, they are now considered authenticated
-    st.session_state['authenticated'] = True
-    # we set the role of the current user
-    st.session_state['role'] = 'coop_advisor'
-    # finally, we ask streamlit to switch to another page, in this case, the 
-    # landing page for this particular user type
-    logger.info("Logging in as Co-op Advisor")
-    st.switch_page('pages/Advisor_Home.py')
+# Create buttons in a grid layout for better visual appeal
+cols = st.columns(2)  # Create two columns for buttons
 
-if st.button("Marketing Analyst", 
-            type = 'primary', 
-            use_container_width=True):
-    # when user clicks the button, they are now considered authenticated
-    st.session_state['authenticated'] = True
-    # we set the role of the current user
-    st.session_state['role'] = 'marketing_analyst'
-    # finally, we ask streamlit to switch to another page, in this case, the 
-    # landing page for this particular user type
-    logger.info("Logging in as Marketing Analyst")
-    st.switch_page('pages/Marketing_Analyst_Home.py')
+roles = [
+    ('Act as Student', 'student', 'pages/Student_Home.py', 'Student'),
+    ('Co-op Advisor', 'coop_advisor', 'pages/Advisor_Home.py', 'Co-op Advisor'),
+    ('Marketing Analyst', 'marketing_analyst', 'pages/Marketing_Analyst_Home.py', 'Marketing Analyst'),
+    ('System Admin', 'sysadmin', 'pages/Sysadmin_Home.py', 'System Admin')
+]
 
-if st.button("System Admin", 
-            type = 'primary', 
-            use_container_width=True):
-    # when user clicks the button, they are now considered authenticated
-    st.session_state['authenticated'] = True
-    # we set the role of the current user
-    st.session_state['role'] = 'sysadmin'
-    # finally, we ask streamlit to switch to another page, in this case, the 
-    # landing page for this particular user type
-    logger.info("Logging in as System Admin")
-    st.switch_page('pages/Sysadmin_Home.py')
-
-
-
-
-
+# Display buttons
+for i, (button_label, role, page, role_desc) in enumerate(roles):
+    col = cols[i % 2]  # Alternate columns for buttons
+    with col:
+        if st.button(button_label, type='primary', use_container_width=True):
+            authenticate_user(role, page, role_desc)
