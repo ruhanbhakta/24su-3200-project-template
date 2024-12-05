@@ -226,173 +226,223 @@ def delete_student_review():
         current_app.logger.error(f"Error deleting review: {e}")
         return jsonify({"error": "Failed to delete review"}), 500
 
-"""
-
-EXTRA ROUTES SOMEEBODY OTHER THAN RUHAN CAN WORK ON
-
-# Grab job postings that matches the student's skills.
-@student.route('/matching_job_postings', methods=['GET'])
-def student_matching_postings():
+@student.route('/matching_job_postings/<int:student_id>', methods=['GET'])
+def get_matching_job_postings(student_id: int):
+    """
+    Retrieve job postings that match a student's skills.
+    
+    Args:
+        student_id (int): The ID of the student
+        
+    Returns:
+        tuple: JSON response with matching jobs and HTTP status code
+    """
     query = '''
-        SELECT
+        SELECT 
             jp.jobId,
             jp.title,
             jp.location,
             jp.industry,
-            s.name AS skill_name,
-            COUNT(a.appId) AS num_applications
-        FROM
-            JobPosting jp
-        JOIN
-            PostingSkills ps ON jp.jobId = ps.jobId
-        JOIN
-            StudentSkills ss ON ps.skillId = ss.skillId
-        JOIN
-            Skills s ON ss.skillId = s.skillId
-        LEFT JOIN
-            Applications a ON jp.jobId = a.jobId
-        WHERE
-            ss.studentId = 3
-        GROUP BY
-            jp.jobId, s.skillId
-        ORDER BY
-            num_applications DESC;
-        '''
-    try:
-        # Get a database connection
-        connection = db.connect()
-        cursor = connection.cursor()
-
-        # Execute query
-        cursor.execute(query)
-        student_matching_postings = cursor.fetchall()
-
-        # Close the cursor and connection
-        cursor.close()
-        connection.close()
-
-        return jsonify(student_matching_postings), 200
-
-    except Exception as e:
-        # Log the error and return a response
-        current_app.logger.error(f"Error fetching matching jobs: {e}")
-        return jsonify({"error": "Failed to fetch matching jobs"}), 500
-    
-# Grab reviews about the employer who posted the job posting.
-#Also takes userinput on specific job (EX: /job_reviews/39)
-@student.route('/job_reviews/<int:job_id>', methods=['GET'])
-def student_job_reviews(job_id):
-    query = '''
-        SELECT
-            j.jobId,
-            j.title,
-            er.reviewId,
-            er.review
-        FROM
-            JobPosting j
-        JOIN
-            Recruiters r ON j.recruiterId = r.recruiterId
-        JOIN
-            ReviewsOnEmployers er ON er.employerId = r.empId
-        WHERE
-            j.jobId = %s;
+            GROUP_CONCAT(s.name) AS matching_skills,
+            COUNT(DISTINCT a.appId) AS num_applications
+        FROM JobPosting jp
+        JOIN PostingSkills ps ON jp.jobId = ps.jobId
+        JOIN StudentSkills ss ON ps.skillId = ss.skillId
+        JOIN Skills s ON ss.skillId = s.skillId
+        LEFT JOIN Applications a ON jp.jobId = a.jobId
+        WHERE ss.studentId = %s
+        GROUP BY jp.jobId
+        ORDER BY num_applications DESC;
     '''
     
     try:
-        # Use context managers for connection and cursor
         with db.connect() as connection:
-            with connection.cursor() as cursor:
+            with connection.cursor(dictionary=True) as cursor:
+                cursor.execute(query, (student_id,))
+                matching_postings = cursor.fetchall()
+                
+                if not matching_postings:
+                    return jsonify({"message": "No matching jobs found"}), 404
+                    
+                return jsonify({
+                    "matching_jobs": matching_postings,
+                    "count": len(matching_postings)
+                }), 200
+                
+    except Exception as e:
+        current_app.logger.error(f"Error fetching matching jobs: {e}")
+        return jsonify({"error": "Failed to fetch matching jobs"}), 500
+
+@student.route('/job_reviews/<int:job_id>', methods=['GET'])
+def get_job_reviews(job_id: int):
+    """
+    Retrieve reviews about the employer who posted a specific job.
+    
+    Args:
+        job_id (int): The ID of the job posting
+        
+    Returns:
+        tuple: JSON response with employer reviews and HTTP status code
+    """
+    query = '''
+        SELECT 
+            j.jobId,
+            j.title,
+            c.Name AS employer_name,
+            er.reviewId,
+            er.review,
+            er.rating,
+            er.datePosted
+        FROM JobPosting j
+        JOIN Recruiters r ON j.recruiterId = r.recruiterId
+        JOIN Companies c ON r.empId = c.empId
+        LEFT JOIN ReviewsOnEmployers er ON er.employerId = c.empId
+        WHERE j.jobId = %s;
+    '''
+    
+    try:
+        with db.connect() as connection:
+            with connection.cursor(dictionary=True) as cursor:
                 cursor.execute(query, (job_id,))
                 job_reviews = cursor.fetchall()
-
-        # Check if reviews are found
-        if not job_reviews:
-            return jsonify({"message": "No reviews found for this job ID"}), 404
-
-        # Return the reviews as JSON
-        return jsonify(job_reviews), 200
-
+                
+                if not job_reviews:
+                    return jsonify({"message": "No reviews found for this job"}), 404
+                
+                response = {
+                    "job_id": job_id,
+                    "job_title": job_reviews[0]['title'] if job_reviews else None,
+                    "employer_name": job_reviews[0]['employer_name'] if job_reviews else None,
+                    "reviews": [
+                        {
+                            "review_id": review['reviewId'],
+                            "review_text": review['review'],
+                            "rating": review['rating'],
+                            "date_posted": review['datePosted'].isoformat() if review['datePosted'] else None
+                        }
+                        for review in job_reviews if review['reviewId'] is not None
+                    ]
+                }
+                
+                return jsonify(response), 200
+                
     except Exception as e:
-        # Log the error and return a response
         current_app.logger.error(f"Error fetching employer reviews: {e}")
         return jsonify({"error": "Failed to fetch employer reviews"}), 500
 
-# Accepts user inputs for specific industries that they want to find alumni in.
-# EXAMPLE: /alumni/Finance
-@student.route('/alumni/<industry>', methods=['GET'])
-def student_get_alumni(industry):
-    # Check if industry is valid (non-empty string)
-    if not industry:
-        return jsonify({"Error": "Industry parameter is required."}), 400
+@student.route('/alumni/<string:industry>', methods=['GET'])
+def get_alumni_by_industry(industry: str):
+    """
+    Retrieve alumni information filtered by industry.
     
+    Args:
+        industry (str): The industry to filter alumni by
+        
+    Returns:
+        tuple: JSON response with alumni data and HTTP status code
+    """
+    if not industry:
+        return jsonify({"error": "Industry parameter is required"}), 400
+        
     query = '''
-        SELECT
+        SELECT 
             a.alumniId,
-            e.Name AS CompanyName,
+            e.Name AS company_name,
+            e.industry AS company_industry,
             a.firstName,
             a.lastName,
             a.email,
-            a.LinkedIn
-        FROM
-            Alumni a
-        JOIN
-            Companies e ON a.empId = e.empId
-        WHERE
-            a.industry = %s;
-    ''' 
-
+            a.LinkedIn,
+            a.graduationYear,
+            a.major
+        FROM Alumni a
+        JOIN Companies e ON a.empId = e.empId
+        WHERE e.industry = %s
+        ORDER BY a.graduationYear DESC;
+    '''
+    
     try:
-        # Use context managers for connection and cursor
         with db.connect() as connection:
-            with connection.cursor() as cursor:
+            with connection.cursor(dictionary=True) as cursor:
                 cursor.execute(query, (industry,))
                 alumni_data = cursor.fetchall()
-
-        # Check if no alumni found for the industry
-        if not alumni_data:
-            return jsonify({"message": "No alumni found for this industry."}), 404
-
-        # Return alumni data as JSON
-        return jsonify(alumni_data), 200
-
+                
+                if not alumni_data:
+                    return jsonify({
+                        "message": "No alumni found for this industry",
+                        "industry": industry,
+                        "count": 0,
+                        "alumni": []
+                    }), 404
+                
+                response = {
+                    "industry": industry,
+                    "count": len(alumni_data),
+                    "alumni": [{
+                        "id": alum['alumniId'],
+                        "name": f"{alum['firstName']} {alum['lastName']}",
+                        "company": alum['company_name'],
+                        "graduation_year": alum['graduationYear'],
+                        "major": alum['major'],
+                        "contact": {
+                            "email": alum['email'],
+                            "linkedin": alum['LinkedIn']
+                        }
+                    } for alum in alumni_data]
+                }
+                
+                return jsonify(response), 200
+                
     except Exception as e:
-        # Log the error for debugging purposes
         current_app.logger.error(f"Error fetching alumni: {e}")
         return jsonify({"error": "Failed to fetch alumni"}), 500
+
+@student.route('/employer_alumni_stats', methods=['GET'])
+def get_employer_alumni_stats():
+    """
+    Retrieve enhanced statistics about alumni at different employers.
     
-# Grab companies and the number of alumni working at that company sorted from most to least.
-@student.route('/employer_alumni_number', methods=['GET'])
-def student_employer_numalum():
+    Returns:
+        tuple: JSON response with employer alumni statistics and HTTP status code
+    """
     query = '''
-        SELECT
-        e.Name AS CompanyName,
-        COUNT(a.alumniId) AS NumAlumni
-        FROM
-        Alumni a
-        JOIN
-        Companies e ON a.empId = e.empId
-        GROUP BY
-        e.Name
-        ORDER BY
-        NumAlumni DESC;
-        '''
+        SELECT 
+            e.Name AS company_name,
+            e.industry,
+            COUNT(a.alumniId) AS alumni_count,
+            MIN(a.graduationYear) AS earliest_grad,
+            MAX(a.graduationYear) AS latest_grad,
+            GROUP_CONCAT(DISTINCT a.major) AS majors
+        FROM Companies e
+        LEFT JOIN Alumni a ON e.empId = a.empId
+        GROUP BY e.empId, e.Name, e.industry
+        ORDER BY alumni_count DESC;
+    '''
+    
     try:
-        # Get a database connection
-        connection = db.connect()
-        cursor = connection.cursor()
-
-        # Execute query
-        cursor.execute(query)
-        student_employer_numalum = cursor.fetchall()
-
-        # Close the cursor and connection
-        cursor.close()
-        connection.close()
-
-        return jsonify(student_employer_numalum), 200
-
+        with db.connect() as connection:
+            with connection.cursor(dictionary=True) as cursor:
+                cursor.execute(query, (,))
+                stats = cursor.fetchall()
+                
+                response = {
+                    "total_companies": len(stats),
+                    "companies": [{
+                        "company_name": company['company_name'],
+                        "industry": company['industry'],
+                        "alumni_statistics": {
+                            "total_alumni": company['alumni_count'],
+                            "graduation_range": {
+                                "earliest": company['earliest_grad'],
+                                "latest": company['latest_grad']
+                            },
+                            "majors": company['majors'].split(',') if company['majors'] else []
+                        }
+                    } for company in stats]
+                }
+                
+                return jsonify(response), 200
+                
     except Exception as e:
-        # Log the error and return a response
-        current_app.logger.error(f"Error fetching employers and number of alumni: {e}")
-        return jsonify({"error": "Failed to fetch employers and number of alumni"}), 500
-"""
+        current_app.logger.error(f"Error fetching employer alumni statistics: {e}")
+        return jsonify({"error": "Failed to fetch employer alumni statistics"}), 500
