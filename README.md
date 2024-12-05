@@ -13,8 +13,8 @@ This app caters to the needs of 5 different user personas: Students, Recruiters,
 ## Instructions to Demo
 * Clone this repository
 * Create a .env file having values for the following parameters: SECRET_KEY, DB_USER, DB_HOST, DB_PORT, DB_NAME, MYSQL_ROOT_PASSWORD
-* Docker compose build
-* Docker compose up
+* Build the images with _docker compose build_
+* Then, start the containers with _docker compose up_
 
 ## Contributors
 
