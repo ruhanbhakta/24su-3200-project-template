@@ -46,9 +46,10 @@ def SysAdmin():
 #### ------------------------ Students Role ------------------------
 def Student():
     st.sidebar.page_link("pages/Student_Home.py", label="Student Home", icon='🖥️')
-    st.sidebar.page_link("pages/Stu_Numapps.py", label='Less Popular Jobs', icon='🏢')
-    st.sidebar.page_link("pages/Stu_Add_Review.py", label='Add a Review', icon='🏢')
-    st.sidebar.page_link("pages/Stu_Update_Review.py", label='Update a Review', icon='🏢')
+    st.sidebar.page_link("pages/Stu_Numapps.py", label='Less Popular Jobs', icon='📉')
+    st.sidebar.page_link("pages/Stu_Add_Review.py", label='Add a Review', icon='➕')
+    st.sidebar.page_link("pages/Stu_Update_Review.py", label='Update a Review', icon='↔️')
+    st.sidebar.page_link("pages/Stu_Delete_Review.py", label='Delete a Review', icon='🗑️')
 
 
 # --------------------------------Links Function -----------------------------------------------
@@ -93,8 +94,6 @@ def SideBarLinks(show_home=False):
             AdvSorter()        
             AdvPop()
             
-       
-
     # Always show the About page at the bottom of the list of links
     AboutPageNav()
 
