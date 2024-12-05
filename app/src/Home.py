@@ -75,7 +75,7 @@ def authenticate_user(role, page_path, role_description):
 cols = st.columns(2)  # Create two columns for buttons
 
 roles = [
-    ('Act as Student', 'student', 'pages/Student_Home.py', 'Student'),
+    ('Student', 'student', 'pages/Student_Home.py', 'Student'),
     ('Co-op Advisor', 'coop_advisor', 'pages/Advisor_Home.py', 'Co-op Advisor'),
     ('Marketing Analyst', 'marketing_analyst', 'pages/Marketing_Analyst_Home.py', 'Marketing Analyst'),
     ('System Admin', 'sysadmin', 'pages/Sysadmin_Home.py', 'System Admin')

@@ -69,7 +69,8 @@ def student_matching_postings(student_id):
         GROUP BY
             jp.jobId, s.skillId
         ORDER BY
-            num_applications DESC;
+            num_applications DESC
+        LIMIT 10;
         '''
     try:
         # Get a database connection
