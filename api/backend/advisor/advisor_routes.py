@@ -218,3 +218,44 @@ def update_student_advisor(student_id):
         current_app.logger.error(f"Error updating advisor for student {student_id}: {e}")
         return jsonify({"error": "Failed to update advisor"}), 500
 
+@advisor.route('/jobposting/<int:job_id>', methods=['DELETE'])
+def delete_job_posting(job_id):
+    try:
+        # Queries to delete dependent records and the job posting
+        query_delete_skills = '''
+            DELETE FROM PostingSkills WHERE jobId = %s;
+        '''
+        query_delete_applications = '''
+            DELETE FROM Applications WHERE jobId = %s;
+        '''
+        query_delete_job = '''
+            DELETE FROM JobPosting WHERE jobId = %s;
+        '''
+
+        # Establish a database connection
+        connection = db.connect()
+        cursor = connection.cursor()
+
+        # Delete dependent records in PostingSkills
+        cursor.execute(query_delete_skills, (job_id,))
+        # Delete dependent records in Applications
+        cursor.execute(query_delete_applications, (job_id,))
+        # Delete the job posting
+        cursor.execute(query_delete_job, (job_id,))
+        connection.commit()
+
+        # Check if the job posting was deleted
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Job posting not found"}), 404
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        # Return a success message
+        return jsonify({"message": f"Job posting with ID {job_id} deleted successfully"}), 200
+
+    except Exception as e:
+        # Log the error and return a response
+        current_app.logger.error(f"Error deleting job posting {job_id}: {e}")
+        return jsonify({"error": f"Failed to delete Job record: {str(e)}"}), 500

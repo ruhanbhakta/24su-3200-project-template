@@ -102,7 +102,7 @@ CREATE TABLE Applications (
     status VARCHAR(50) CHECK (status IN ('Pending', 'Accepted', 'Rejected')),
     date DATE,
     FOREIGN KEY (studentId) REFERENCES Students(studentId),
-    FOREIGN KEY (jobId) REFERENCES JobPosting(jobId)
+    FOREIGN KEY (jobId) REFERENCES JobPosting(jobId) ON DELETE CASCADE
 );
 
 -- Creating the StudentReviews table
