@@ -19,6 +19,11 @@ if st.button('View Jobs with Fewer Applications',
              use_container_width=True):
   st.switch_page('pages/Stu_Numapps.py')
 
+if st.button("See Your Matching Jobs",
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/Stu_Skills_Match.py')
+
 if st.button('Add a Review on Previous or Current Employer', 
              type='primary',
              use_container_width=True):
@@ -33,3 +38,4 @@ if st.button("Delete a Review Previously Posted",
              type='primary',
              use_container_width=True):
   st.switch_page('pages/Stu_Delete_Review.py')
+
