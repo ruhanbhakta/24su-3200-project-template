@@ -10,6 +10,12 @@ Built for students seeking their first chance, recruiters who value efficiency, 
 
 This app caters to the needs of 5 different user personas: Students, Recruiters, Advisors, System Administrators, and Marketing Analysts
 
+## Instructions to Demo
+To demo the application, you will need to build and start the docker containers. 
+In the terminal, paste the following commands:
+* Docker compose build
+* Docker compose up
+
 ## Contributors
 
 Made by Ruhan, Jeff, Borys, Spencer, and Yuan.
