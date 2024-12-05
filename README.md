@@ -12,7 +12,7 @@ This app caters to the needs of 5 different user personas: Students, Recruiters,
 
 ## How to Setup the Docker Containers
 * Clone this repository
-* Create a .env file having values for the following parameters: SECRET_KEY, DB_USER, DB_HOST, DB_PORT, DB_NAME, MYSQL_ROOT_PASSWORD
+* Create a .env file in the API folder, having values for the following parameters: SECRET_KEY, DB_USER, DB_HOST, DB_PORT, DB_NAME, MYSQL_ROOT_PASSWORD
 * Build the images with _docker compose build_
 * Then, start the containers with _docker compose up_
 
