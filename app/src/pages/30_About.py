@@ -25,8 +25,8 @@ st.markdown(
     """
     FreshMeet simplifies the co-op experience with a **data-driven platform**:  
     - **For Students:** Personalized dashboards for tracking applications and skill progress.  
-    - **For Recruiters:** Efficient candidate filtering with skill-based matches and updates.  
     - **For Advisors:** Intuitive tools to monitor and support students at scale.
+    - **For Marketing Analaysts:** Valueable data insights on key metrics to communicate to prospective students.
     """
 )
 
@@ -36,7 +36,7 @@ st.markdown(
     """
     - **Streamlined Processes:** Transform the co-op journey from chaos to clarity.  
     - **Data Insights:** Leverage powerful analytics for better decision-making.  
-    - **Seamless Connections:** Bring students, recruiters, and advisors together.
+    - **Seamless Connections:** Bring students and advisors together.
     """
 )
 
