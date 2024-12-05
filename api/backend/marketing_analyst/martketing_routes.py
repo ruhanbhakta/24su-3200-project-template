@@ -13,7 +13,6 @@ def accepted_apps():
         connection = db.connect()
         cursor = connection.cursor()
 
-        # Execute query
         cursor.execute("SELECT COUNT(*) AS TotalAcceptances FROM Applications WHERE status = 'Accepted'")
         numacceptances = cursor.fetchall()
 
@@ -36,7 +35,6 @@ def total_apps():
         connection = db.connect()
         cursor = connection.cursor()
 
-        # Execute query
         cursor.execute("SELECT COUNT(*) AS TotalApplications FROM Applications")
         numacceptances = cursor.fetchall()
 
@@ -62,7 +60,6 @@ def get_company_sizes():
         connection = db.connect()
         cursor = connection.cursor()
 
-        # Execute the query
         query = """
         SELECT c.size AS CompanySize, COUNT(j.jobId) AS JobPostingsCount
         FROM Companies c
@@ -95,7 +92,6 @@ def get_employer_alumni_count():
         connection = db.connect()
         cursor = connection.cursor()
 
-        # Execute the query
         query = """
         SELECT c.Name AS EmployerName, COUNT(a.alumniId) AS AlumniCount
         FROM Companies c
@@ -129,7 +125,6 @@ def get_employer_coop_count():
         connection = db.connect()
         cursor = connection.cursor()
 
-        # Execute the query
         query = """
         SELECT c.Name AS EmployerName, COUNT(a.appId) AS CoopCount
         FROM Companies c
