@@ -42,6 +42,55 @@ def student_job_postings():
         # Log the error and return a response
         current_app.logger.error(f"Error fetching jobs: {e}")
         return jsonify({"error": "Failed to fetch jobs"}), 500
+
+#GET route for finding job postings that match student skills
+@student.route('/matching_job_postings', methods=['GET'])
+def student_matching_postings():
+    query = '''
+        SELECT
+            jp.jobId,
+            jp.title,
+            jp.location,
+            jp.industry,
+            s.name AS skill_name,
+            COUNT(a.appId) AS num_applications
+        FROM
+            JobPosting jp
+        JOIN
+            PostingSkills ps ON jp.jobId = ps.jobId
+        JOIN
+            StudentSkills ss ON ps.skillId = ss.skillId
+        JOIN
+            Skills s ON ss.skillId = s.skillId
+        LEFT JOIN
+            Applications a ON jp.jobId = a.jobId
+        WHERE
+            ss.studentId = 3
+        GROUP BY
+            jp.jobId, s.skillId
+        ORDER BY
+            num_applications DESC;
+        '''
+    try:
+        # Get a database connection
+        connection = db.connect()
+        cursor = connection.cursor()
+
+        # Execute query
+        cursor.execute(query)
+        student_matching_postings = cursor.fetchall()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        return jsonify(student_matching_postings), 200
+
+    except Exception as e:
+        # Log the error and return a response
+        current_app.logger.error(f"Error fetching matching jobs: {e}")
+        return jsonify({"error": "Failed to fetch matching jobs"}), 500
+
      
 # POST route for the student to leave a review on the employer.
 @student.route('/add_employer_review', methods=['POST'])
@@ -264,49 +313,6 @@ def student_job_reviews(job_id):
         # Log the error and return a response
         current_app.logger.error(f"Error fetching employer reviews: {e}")
         return jsonify({"error": "Failed to fetch employer reviews"}), 500
-    
-# Grab the name and LinkedIn of the employer who made the job posting.
-#Also takes userinput on specific job (EX: /employer_info/4)
-@student.route('/employer_info/<int:job_id>', methods=['GET'])
-def company_info(job_id):
-    query = '''
-        SELECT
-            e.Name AS CompanyName,
-            e.LinkedIn
-        FROM
-            JobPosting j
-        JOIN
-            Recruiters r ON j.recruiterId = r.recruiterId
-        JOIN
-            Companies e ON r.empId = e.empId
-        WHERE
-            j.jobId = %s;
-    '''
-    try:
-        # Get a database connection
-        connection = db.connect()
-        cursor = connection.cursor()
-
-        # Execute the query with the dynamic job_id
-        cursor.execute(query, (job_id,))
-        company_info = cursor.fetchall()
-
-        # Close the cursor and connection
-        cursor.close()
-        connection.close()
-
-        # Check if the result is empty
-        if not company_info:
-            return jsonify({"error": "No company found for the given jobId"}), 404
-
-        # Return the results as JSON
-        return jsonify(company_info), 200
-
-    except Exception as e:
-        # Log the error and return a response
-        current_app.logger.error(f"Error fetching company information: {e}")
-        return jsonify({"error": "Failed to fetch company information"}), 500
-    
 
 # Accepts user inputs for specific industries that they want to find alumni in.
 # EXAMPLE: /alumni/Finance
