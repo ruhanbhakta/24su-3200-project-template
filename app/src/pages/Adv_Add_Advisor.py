@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 SideBarLinks()
 
-# Base URL of the Flask application 
+# Base URL
 BASE_URL = "http://api:4000/advisor"
 
 # Function to call the `/add_advisor` route (POST)
