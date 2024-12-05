@@ -81,6 +81,9 @@ def SideBarLinks(show_home=False):
         if st.session_state["role"] == "sysadmin":
             SysAdmin()
 
+        if st.session_state["role"] == "student":
+            Student()
+
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state['role'] == 'coop_advisor':
             AdvisorHome()

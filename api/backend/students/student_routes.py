@@ -44,36 +44,51 @@ def student_job_postings():
         return jsonify({"error": "Failed to fetch jobs"}), 500
      
 # POST route for the student to leave a review on the employer.
-@student.route('/reviews/add', methods=['POST'])
-def add_review():
+@student.route('/add_employer_review', methods=['POST'])
+def add_employer_review():
     try:
-        data = request.get_json()
-        employer_id = data.get("employerId")
-        student_review = data.get("review")
+        # Get review data from the request
+        review_data = request.json
 
-        if not employer_id or student_review:
-            return jsonify({"Error:" "Please input both a valid Employer ID and Review"}), 400
-        #Insert Query
+        # Validate required fields
+        required_fields = ['employerId', 'review']
+        for field in required_fields:
+            if field not in review_data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        # Construct the SQL query
         query = '''
-            INSERT INTO ReviewsOnEmployers (employerId, review)
-            VALUES (%s, %s);
+        INSERT INTO ReviewsOnEmployers (employerId, review)
+        VALUES (%s, %s)
         '''
-        #Connect to DB
+        
+        # Get a database connection
         connection = db.connect()
         cursor = connection.cursor()
-        cursor.execute(query, (employer_id, student_review))
+
+        # Execute the query with the review data
+        cursor.execute(query, (
+            review_data['employerId'],
+            review_data['review']
+        ))
+
+        # Commit the transaction
         connection.commit()
 
+        # Get the ID of the newly inserted review
+        new_review_id = cursor.lastrowid
+
+        # Close the cursor and connection
         cursor.close()
         connection.close()
-        #Success Message
-        return jsonify({"Message": "Successfully added review!"}), 201
-    
+
+        return jsonify({"message": "Review added successfully", "reviewId": new_review_id}), 201
+
     except Exception as e:
-        #Log any exception that happens, then returns error message
-        current_app.logger.error(f"Error adding review: {e}")
-        return jsonify({"error": "Failed to add review"}), 500
-    
+        # Log the error and return an error response
+        current_app.logger.error(f"Error adding employer review: {e}")
+        return jsonify({"error": "Failed to add employer review"}), 500
+
 #DELETE route for the student to remove any reviews they had
 @student.route('/reviews/delete/<int:review_id>', methods=['DELETE'])
 def delete_review(review_id):

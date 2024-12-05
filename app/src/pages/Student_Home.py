@@ -19,10 +19,10 @@ if st.button('View Jobs with Fewer Applications',
              use_container_width=True):
   st.switch_page('pages/Stu_Numapps.py')
 
-if st.button('View the Simple API Demo', 
+if st.button('Add a Review on Previous or Current Employer', 
              type='primary',
              use_container_width=True):
-  st.switch_page('pages/12_API_Test.py')
+  st.switch_page('pages/Stu_Add_Review.py')
 
 if st.button("View Classification Demo",
              type='primary',
