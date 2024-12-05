@@ -13,8 +13,8 @@ st.write('')
 st.write('')
 st.write('### What would you like to do today?')
 
-st.write("")  # Spacer
-st.write("")  # Spacer
+st.write("")  
+st.write("")  
 
 if st.button('View Number of Active Connections', 
              type='primary',
