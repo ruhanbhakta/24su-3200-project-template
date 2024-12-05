@@ -5,7 +5,7 @@ from backend.ml_models.model01 import predict
 
 student = Blueprint('student', __name__)
 
-# Grab all of the job postings for the student, along with the number of applications they have.
+# Grab all of the job postings along with the number of applications they have.
 @student.route('/job_postings', methods=['GET'])
 def student_job_postings():
     query = '''
@@ -20,7 +20,8 @@ def student_job_postings():
         GROUP BY
         j.jobId
         ORDER BY
-        NumApps;
+        NumApps
+        LIMIT 15;
         '''
     try:
         # Get a database connection
