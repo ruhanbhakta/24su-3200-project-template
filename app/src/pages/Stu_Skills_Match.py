@@ -1,10 +1,12 @@
 import streamlit as st
 import requests
 import pandas as pd
+from modules.nav import SideBarLinks
 
 # Base URL 
 BASE_URL = "http://api:4000/student"  
 
+SideBarLinks()
 
 def fetch_matching_job_postings(student_id):
     response = requests.get(f"{BASE_URL}/matching_job_postings/{student_id}")
