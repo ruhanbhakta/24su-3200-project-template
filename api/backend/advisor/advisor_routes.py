@@ -141,7 +141,6 @@ def add_advisor():
             if field not in advisor_data:
                 return jsonify({"error": f"Missing required field: {field}"}), 400
 
-        # Construct the SQL query
         query = '''
         INSERT INTO Advisors (firstName, lastName, email)
         VALUES (%s, %s, %s)
@@ -189,7 +188,6 @@ def update_student_advisor(student_id):
         if not advisor_id:
             return jsonify({"error": "advisorId is required"}), 400
 
-        # Query to update the advisor for the student
         query = '''
             UPDATE Students
             SET advisorId = %s
@@ -219,7 +217,6 @@ def update_student_advisor(student_id):
 @advisor.route('/jobposting/<int:job_id>', methods=['DELETE'])
 def delete_job_posting(job_id):
     try:
-        # Queries to delete dependent records and the job posting
         query_delete_skills = '''
             DELETE FROM PostingSkills WHERE jobId = %s;
         '''
