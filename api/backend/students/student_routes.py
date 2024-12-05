@@ -137,40 +137,42 @@ def update_student_review():
         current_app.logger.error(f"Error updating student review: {e}")
         return jsonify({"error": "Failed to update student review"}), 500
 
-#DELETE route for the student to remove any reviews they had
-@student.route('/reviews/delete/<int:review_id>', methods=['DELETE'])
-def delete_review(review_id):
-    query = '''
-        DELETE FROM ReviewsOnEmployers
-        WHERE reviewId = %s;
-    '''
+# DELETE route for the student to remove any reviews they had
+@student.route('/delete_student_review', methods=['DELETE'])
+def delete_student_review():
     try:
-        # Connect to the database
+        # Get the review ID from the request
+        review_data = request.json
+        review_id = review_data.get('reviewId')
+
+        # Validate the reviewId field
+        if not review_id:
+            return jsonify({"error": "Missing required field: reviewId"}), 400
+
+        # Check if the review exists
+        query = 'SELECT * FROM ReviewsOnEmployers WHERE reviewId = %s'
         connection = db.connect()
         cursor = connection.cursor()
-
-        # Log the deletion attempt
-        current_app.logger.info(f"Attempting to delete review with reviewId: {review_id}")
-
-        # Execute the delete query
         cursor.execute(query, (review_id,))
+        review = cursor.fetchone()
+
+        if not review:
+            current_app.logger.error(f"Review with ID {review_id} not found")
+            return jsonify({"error": "Review not found"}), 404  # Review doesn't exist
+
+        current_app.logger.info(f"Review with ID {review_id} found: {review}")
+
+        # Proceed to delete the review if it exists
+        delete_query = 'DELETE FROM ReviewsOnEmployers WHERE reviewId = %s'
+        cursor.execute(delete_query, (review_id,))
         connection.commit()
 
-        if cursor.rowcount == 0:
-            # Log and return error if no rows were affected
-            current_app.logger.warning(f"No review found with reviewId: {review_id}")
-            return jsonify({"error": "Review not found"}), 404
-
-        # Close the cursor and the connection
         cursor.close()
         connection.close()
 
-        # Log success and return response
-        current_app.logger.info(f"Successfully deleted review with reviewId: {review_id}")
         return jsonify({"message": "Review deleted successfully"}), 200
 
     except Exception as e:
-        # Log the exception and return a generic error message
         current_app.logger.error(f"Error deleting review: {e}")
         return jsonify({"error": "Failed to delete review"}), 500
 
