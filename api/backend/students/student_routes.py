@@ -88,6 +88,54 @@ def add_employer_review():
         # Log the error and return an error response
         current_app.logger.error(f"Error adding employer review: {e}")
         return jsonify({"error": "Failed to add employer review"}), 500
+    
+# Route to update reviews
+@student.route('/update_student_review', methods=['PUT'])
+def update_student_review():
+    try:
+        # Get review update data from the request
+        review_data = request.json
+
+        # Validate required fields
+        required_fields = ['reviewId', 'review']
+        for field in required_fields:
+            if field not in review_data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        # Construct the SQL query to update the review
+        query = '''
+        UPDATE ReviewsOnStudents
+        SET review = %s
+        WHERE reviewId = %s
+        '''
+        
+        # Get a database connection
+        connection = db.connect()
+        cursor = connection.cursor()
+
+        # Execute the query with the updated review data
+        cursor.execute(query, (
+            review_data['review'],
+            review_data['reviewId']
+        ))
+
+        # Commit the transaction
+        connection.commit()
+
+        # Check if any row was updated
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Review not found or already updated"}), 404
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        return jsonify({"message": "Review updated successfully"}), 200
+
+    except Exception as e:
+        # Log the error and return an error response
+        current_app.logger.error(f"Error updating student review: {e}")
+        return jsonify({"error": "Failed to update student review"}), 500
 
 #DELETE route for the student to remove any reviews they had
 @student.route('/reviews/delete/<int:review_id>', methods=['DELETE'])

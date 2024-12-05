@@ -46,8 +46,8 @@ def SysAdmin():
 #### ------------------------ Students Role ------------------------
 def Student():
     st.sidebar.page_link("pages/Student_Home.py", label="Student Home", icon='🖥️')
-    st.sidebar.page_link("pages/Stu_Numapps.py", label='Active Connections', icon='🏢')
-  
+    st.sidebar.page_link("pages/Stu_Numapps.py", label='Less Popular Jobs', icon='🏢')
+    st.sidebar.page_link("pages/Stu_Add_Review.py", label='Add a Review', icon='🏢')
 
 # --------------------------------Links Function -----------------------------------------------
 def SideBarLinks(show_home=False):
