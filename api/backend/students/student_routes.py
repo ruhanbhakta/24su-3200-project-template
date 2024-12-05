@@ -422,7 +422,7 @@ def get_employer_alumni_stats():
     try:
         with db.connect() as connection:
             with connection.cursor(dictionary=True) as cursor:
-                cursor.execute(query, (,))
+                cursor.execute(query)
                 stats = cursor.fetchall()
                 
                 response = {
