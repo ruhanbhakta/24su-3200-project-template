@@ -131,33 +131,26 @@ def delete_alumni(alumni_id):
         WHERE alumniId = %s;
     '''
     try:
-        # Connect to the database
+        
         connection = db.connect()
         cursor = connection.cursor()
 
-        # Log the deletion attempt
         current_app.logger.info(f"Attempting to delete alumni with alumniId: {alumni_id}")
 
-        # Execute the delete query
         cursor.execute(query, (alumni_id,))
         connection.commit()
 
-        # Check if the alumni was deleted
         if cursor.rowcount == 0:
-            # Log and return error if no rows were affected
             current_app.logger.warning(f"No alumni found with alumniId: {alumni_id}")
             return jsonify({"error": "Alumni not found"}), 404
 
-        # Close the cursor and the connection
         cursor.close()
         connection.close()
 
-        # Log success and return response
         current_app.logger.info(f"Successfully deleted alumni with alumniId: {alumni_id}")
         return jsonify({"message": "Alumni record deleted successfully"}), 200
 
     except Exception as e:
-        # Log the exception and return a generic error message
         current_app.logger.error(f"Error deleting alumni record: {e}")
         return jsonify({"error": "Failed to delete alumni record"}), 500
 
