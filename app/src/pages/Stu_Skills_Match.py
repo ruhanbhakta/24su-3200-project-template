@@ -1,82 +1,53 @@
-import logging
 import streamlit as st
-from modules.nav import SideBarLinks
 import requests
+import logging
+from modules.nav import SideBarLinks
 
-# Configure logging
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
-# Streamlit page configuration
-st.set_page_config(
-    page_title="Matching Jobs",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
+BASE_URL = "http://api:4000/student"
 
-# Add custom CSS for styling
-st.markdown(
+# Add employer review
+def add_employer_review(employer_id, review):
     """
-    <style>
-    .main-header {
-        background: linear-gradient(90deg, #6a11cb, #2575fc);
-        color: white;
-        padding: 20px;
-        text-align: center;
-        border-radius: 10px;
-        margin-bottom: 20px;
-    }
-    .stButton button {
-        background-color: #007BFF;
-        color: white;
-        font-size: 16px;
-        padding: 10px 20px;
-        border-radius: 8px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .stButton button:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# Sidebar Navigation
-SideBarLinks()
-
-# Main Header
-st.markdown(
+    Sends a POST request to add a new employer review.
     """
-    <div class="main-header">
-        <h1>📃 Jobs that Match You!</h1>
-        <p>View the jobs that match your skills the best!</p>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-# Define API endpoint
-MATCHING_JOBS_API = 'http://api:4000/student/matching_job_postings'
-
-# Fetch and display data
-if st.button("Fetch Jobs", type="primary", key="fetch_matching_jobs_btn"):
     try:
-        logger.info("Fetching data")
-        response = requests.get(MATCHING_JOBS_API)
-        if response.status_code == 200:
-            data = response.json()
-            if data:
-                # Display the results as a table
-                st.subheader("Jobs that match you:")
-                st.table(data)
-                logger.info("Data successfully displayed as a table.")
-            else:
-                st.warning("No data available.")
-                logger.warning("API returned no data.")
+        response = requests.post(
+            f"{BASE_URL}/add_employer_review",
+            json={
+                "employerId": employer_id,
+                "review": review
+            }
+        )
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error while adding employer review: {e}")
+        return {"error": "Failed to connect to the server"}
+    
+    SideBarLinks()
+
+    # Page Title
+st.title("Employer Reviews Dashboard")
+
+# Section: Add a New Employer Review
+st.header("Add a New Employer Review")
+
+# Input Fields
+employer_id = st.number_input("Employer ID", min_value=1, step=1)
+review = st.text_area("Review Text")
+
+# Button to Submit Review
+if st.button("Add Review"):
+    if employer_id and review.strip():
+        result = add_employer_review(employer_id, review)
+        if "error" in result:
+            st.error(result["error"])
         else:
-            st.error(f"Failed to fetch data. Status Code: {response.status_code}")
-            logger.error(f"Error fetching data: {response.json()}")
-    except Exception as e:
-        st.error("An error occurred while fetching matching jobs data.")
-        logger.error(f"Exception occurred: {e}")
+            st.success("Review added successfully!")
+            st.json(result)
+    else:
+        st.error("Please fill in all fields.")
+
+#
