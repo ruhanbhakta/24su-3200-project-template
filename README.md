@@ -16,6 +16,9 @@ This app caters to the needs of 4 different user personas: Students, Advisors, S
 * Build the images with _docker compose build_
 * Then, start the containers with _docker compose up_
 
+## Demo Video Link
+Here is a link to us demonstrating the front end of our application: https://youtu.be/jVMKqzwssvU
+
 ## Contributors
 
 Made by Ruhan Bhakta, Spencer Chin, Borys Kocherev, Yuan Feng, Sunghyun Jun
